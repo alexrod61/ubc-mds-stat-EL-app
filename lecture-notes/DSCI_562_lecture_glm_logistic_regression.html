@@ -1,0 +1,2151 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression &#8212; Sample Jupyter Book</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DSCI 552 Lecture 2 - Generalized Linear Models: Count Regression" href="DSCI_562_lecture_glm_count_regression.html" />
+    <link rel="prev" title="DSCI 552 Lecture: Maximum Likelihood Estimation" href="DSCI_552_lecture-maximum-likelihood-estimation.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Sample Jupyter Book</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    Sample Teaching Materials for the Application to Assistant Professor of Teaching - MDS/STAT
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Lecture Notes
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="DSCI_552_lecture-maximum-likelihood-estimation.html">
+   DSCI 552 Lecture: Maximum Likelihood Estimation
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="DSCI_562_lecture_glm_count_regression.html">
+   DSCI 552 Lecture 2 - Generalized Linear Models: Count Regression
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/alexrod61/ubc-mds-stat-app/master?urlpath=tree/lecture-notes/DSCI_562_lecture_glm_logistic_regression.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/alexrod61/ubc-mds-stat-app"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/alexrod61/ubc-mds-stat-app/issues/new?title=Issue%20on%20page%20%2Flecture-notes/DSCI_562_lecture_glm_logistic_regression.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/lecture-notes/DSCI_562_lecture_glm_logistic_regression.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#high-level-goals-of-this-course">
+   High-Level Goals of this Course
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#today-s-learning-goals">
+   Today’s Learning Goals
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-r-packages-and-scripts">
+   Loading
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     R
+    </span>
+   </code>
+   Packages and Scripts
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#basics-of-ordinary-least-squares-regression">
+   1. Basics of Ordinary Least-Squares Regression
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#can-we-apply-linear-regression-here">
+     1.1. Can We Apply Linear Regression Here?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#what-makes-a-regression-model-linear">
+     1.2. What makes a regression model “
+     <em>
+      linear
+     </em>
+     ”?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#categorical-regressors">
+     1.3. Categorical Regressors
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#estimation">
+     1.4. Estimation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#inference">
+     1.5. Inference
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#violations-of-assumptions">
+     1.6. Violations of Assumptions
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#distributional-misspecification">
+       1.6.1. Distributional Misspecification
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#random-components-with-non-zero-mean">
+       1.6.2. Random Components with Non-Zero Mean
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#heterocedasticity">
+       1.6.3. Heterocedasticity
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#correlated-random-components">
+       1.6.4. Correlated Random Components
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#when-ordinary-linear-regression-does-not-suffice">
+   2. When Ordinary Linear Regression Does Not Suffice
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#paving-the-way-to-generalized-linear-models">
+   3. Paving the Way to Generalized Linear Models
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#nature-of-the-model-function">
+     3.1. Nature of the Model Function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-regression-problem">
+     3.2. The Regression Problem
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#black-box-models">
+     3.3. Black-box Models
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#interpretability-in-linear-models">
+     3.4. Interpretability in Linear Models
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-types-of-parametric-assumptions">
+     3.5. The Types of Parametric Assumptions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#an-example-where-ols-regression-totally-goes-wrong">
+     3.6. An example where OLS regression totally goes wrong
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#restricted-response-ranges-in-linear-regression">
+     3.7. Restricted Response Ranges in Linear Regression
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#link-function">
+     3.8. Link Function
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#binary-logistic-regression">
+   4. Binary Logistic Regression
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-breast-cancer-dataset">
+     4.1. The Breast Cancer Dataset
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#using-ordinary-least-squares-to-model-probabilities">
+     4.2. Using Ordinary Least-Squares to Model Probabilities
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-logit-function">
+     4.3. The Logit Function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#general-modelling-framework-of-the-binary-logistic-regression">
+     4.4. General Modelling Framework of the Binary Logistic Regression
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     4.5. Estimation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     4.6. Inference
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#coefficient-interpretation">
+     4.7. Coefficient Interpretation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#predictions">
+     4.8. Predictions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#optional-4-9-model-diagnostics">
+     (Optional) 4.9. Model Diagnostics
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#deviance-residuals">
+       4.9.1. Deviance Residuals
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#binned-residual-plots">
+       4.9.1. Binned Residual Plots
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#wrapping-up">
+   5. Wrapping Up
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#high-level-goals-of-this-course">
+   High-Level Goals of this Course
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#today-s-learning-goals">
+   Today’s Learning Goals
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-r-packages-and-scripts">
+   Loading
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     R
+    </span>
+   </code>
+   Packages and Scripts
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#basics-of-ordinary-least-squares-regression">
+   1. Basics of Ordinary Least-Squares Regression
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#can-we-apply-linear-regression-here">
+     1.1. Can We Apply Linear Regression Here?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#what-makes-a-regression-model-linear">
+     1.2. What makes a regression model “
+     <em>
+      linear
+     </em>
+     ”?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#categorical-regressors">
+     1.3. Categorical Regressors
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#estimation">
+     1.4. Estimation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#inference">
+     1.5. Inference
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#violations-of-assumptions">
+     1.6. Violations of Assumptions
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#distributional-misspecification">
+       1.6.1. Distributional Misspecification
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#random-components-with-non-zero-mean">
+       1.6.2. Random Components with Non-Zero Mean
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#heterocedasticity">
+       1.6.3. Heterocedasticity
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#correlated-random-components">
+       1.6.4. Correlated Random Components
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#when-ordinary-linear-regression-does-not-suffice">
+   2. When Ordinary Linear Regression Does Not Suffice
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#paving-the-way-to-generalized-linear-models">
+   3. Paving the Way to Generalized Linear Models
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#nature-of-the-model-function">
+     3.1. Nature of the Model Function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-regression-problem">
+     3.2. The Regression Problem
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#black-box-models">
+     3.3. Black-box Models
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#interpretability-in-linear-models">
+     3.4. Interpretability in Linear Models
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-types-of-parametric-assumptions">
+     3.5. The Types of Parametric Assumptions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#an-example-where-ols-regression-totally-goes-wrong">
+     3.6. An example where OLS regression totally goes wrong
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#restricted-response-ranges-in-linear-regression">
+     3.7. Restricted Response Ranges in Linear Regression
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#link-function">
+     3.8. Link Function
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#binary-logistic-regression">
+   4. Binary Logistic Regression
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-breast-cancer-dataset">
+     4.1. The Breast Cancer Dataset
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#using-ordinary-least-squares-to-model-probabilities">
+     4.2. Using Ordinary Least-Squares to Model Probabilities
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-logit-function">
+     4.3. The Logit Function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#general-modelling-framework-of-the-binary-logistic-regression">
+     4.4. General Modelling Framework of the Binary Logistic Regression
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     4.5. Estimation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     4.6. Inference
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#coefficient-interpretation">
+     4.7. Coefficient Interpretation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#predictions">
+     4.8. Predictions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#optional-4-9-model-diagnostics">
+     (Optional) 4.9. Model Diagnostics
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#deviance-residuals">
+       4.9.1. Deviance Residuals
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#binned-residual-plots">
+       4.9.1. Binned Residual Plots
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#wrapping-up">
+   5. Wrapping Up
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="dsci-552-lecture-1-generalized-linear-models-binary-logistic-regression">
+<h1>DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression<a class="headerlink" href="#dsci-552-lecture-1-generalized-linear-models-binary-logistic-regression" title="Permalink to this headline">#</a></h1>
+<section id="high-level-goals-of-this-course">
+<h2>High-Level Goals of this Course<a class="headerlink" href="#high-level-goals-of-this-course" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Describe the risk and value of making parametric assumptions in regression.</p></li>
+<li><p>Fit model functions that represent probabilistic quantities besides the mean.</p></li>
+<li><p>Identify situations where Ordinary Least-Squares (OLS) regression is sub-optimal, and apply alternative regression methods that better address the situation.</p></li>
+</ul>
+</section>
+<section id="today-s-learning-goals">
+<h2>Today’s Learning Goals<a class="headerlink" href="#today-s-learning-goals" title="Permalink to this headline">#</a></h2>
+<p>By the end of this lecture, you should be able to:</p>
+<ul class="simple">
+<li><p>Recall the basics of OLS regression.</p></li>
+<li><p>Identify cases where OLS regression is not suitable.</p></li>
+<li><p>Distinguish what makes a regression model “<em>linear</em>”.</p></li>
+<li><p>Explore the concept of the link function.</p></li>
+<li><p>Explain the concept of generalized linear models (GLMs).</p></li>
+<li><p>Differentiate a GLM from an OLS regression model.</p></li>
+<li><p>Build up the first fundamental GLM: Binary Logistic regression.</p></li>
+</ul>
+</section>
+<section id="loading-r-packages-and-scripts">
+<h2>Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages and Scripts<a class="headerlink" href="#loading-r-packages-and-scripts" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span> <span class="o">=</span> <span class="m">6</span><span class="p">)</span>
+<span class="nf">source</span><span class="p">(</span><span class="s">&quot;scripts/support_functions.R&quot;</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">mlbench</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">AER</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">cowplot</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">broom</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">performance</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">qqplotr</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Attaching packages</span> ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.2 ──
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">ggplot2</span> 3.4.0      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">purrr  </span> 0.3.4 
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tibble </span> 3.1.8      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">dplyr  </span> 1.0.10
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tidyr  </span> 1.2.0      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">stringr</span> 1.4.0 
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">readr  </span> 2.1.2      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">forcats</span> 0.5.1 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Conflicts</span> ────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">filter()</span> masks <span class=" -Color -Color-Blue">stats</span>::filter()
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">lag()</span>    masks <span class=" -Color -Color-Blue">stats</span>::lag()
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: car
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: carData
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Attaching package: ‘car’
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following object is masked from ‘package:dplyr’:
+
+    recode
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following object is masked from ‘package:purrr’:
+
+    some
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: lmtest
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: zoo
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Attaching package: ‘zoo’
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: sandwich
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: survival
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Attaching package: ‘qqplotr’
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following objects are masked from ‘package:ggplot2’:
+
+    stat_qq_line, StatQqLine
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="basics-of-ordinary-least-squares-regression">
+<h2>1. Basics of Ordinary Least-Squares Regression<a class="headerlink" href="#basics-of-ordinary-least-squares-regression" title="Permalink to this headline">#</a></h2>
+<p>In <strong>DSCI 561</strong>, you learned comprehensive material about OLS regression. Why are we using the term <strong>ordinary</strong>? This term refers to a linear model with a <strong>response</strong> (also known as <strong>endogenous variable</strong>) of <strong>continuous nature</strong>. From <strong>DSCI 551</strong>, recall that a continuous variable can take on an infinite number of real values in a given range. This response is subject to <strong>regressors</strong> (also known as <strong>exogenous variables</strong>, <strong>explanatory variables</strong>, <strong>features</strong>, or <strong>predictors</strong>). Note that the regressors can be of a continuous or discrete nature. When the regressors are <strong>discrete</strong> and <strong>factor-type</strong> (i.e., with different categories), they could be:</p>
+<ul class="simple">
+<li><p><strong>Nominal.</strong> In this factor-type, we have categories associated that do not follow any specific order. For example, a clinical trial with a factor of three treatments: <em>placebo</em>, <em>treatment A</em>, and <em>treatment B</em>.</p></li>
+<li><p><strong>Ordinal.</strong> The categories, in this case, follow a specific order. A typical example is the Likert scale of survey items: <em>strongly disagree</em>, <em>disagree</em>, <em>neutral</em>, <em>agree</em>, and <em>strongly agree</em>.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The ordinary linear case is a practical starting point for explaining regression models.</p>
+</div>
+<p>Conceptually, a linear regression model can be expressed as:</p>
+<div class="math notranslate nohighlight" id="equation-eq-conceptual-model">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-conceptual-model" title="Permalink to this equation">#</a></span>\[
+\mbox{Response} = \mbox{Systematic Component} + \mbox{Random Component}.
+\]</div>
+<ul class="simple">
+<li><p>The <strong>systematic component</strong> represents the mean of the response <strong>which is conditioned on the regressor values</strong>.</p></li>
+<li><p>The <strong>random component</strong> measures the extent to which the observed value of the response might deviate from its mean and is viewed as <strong>random noise</strong>.</p></li>
+</ul>
+<p>For the <span class="math notranslate nohighlight">\(i\)</span>th observation in our <strong>sample</strong> or <strong>training data</strong> (<span class="math notranslate nohighlight">\(i = 1, \dots, n\)</span>), the conceptual model <a class="reference internal" href="#equation-eq-conceptual-model">(1)</a> is mathematically represented as:</p>
+<div class="math notranslate nohighlight">
+\[
+\underbrace{Y_i}_\text{Response}  = \underbrace{\beta_0 + \beta_1 g_1(X_{i, 1}) + \ldots + \beta_p g_p(X_{i,p})}_\text{Systematic Component} + \underbrace{\varepsilon_i.}_\text{Random Component}
+\]</div>
+<p>Note the following:</p>
+<ul class="simple">
+<li><p>The response <span class="math notranslate nohighlight">\(Y_i\)</span> is equal to the sum of <span class="math notranslate nohighlight">\(p + 2\)</span> terms.</p></li>
+<li><p>The systematic component is the sum of:</p>
+<ul>
+<li><p>An <strong>unknown intercept</strong> <span class="math notranslate nohighlight">\(\beta_0\)</span> and</p></li>
+<li><p><span class="math notranslate nohighlight">\(p\)</span> <strong>regressor functions</strong> <span class="math notranslate nohighlight">\(g_j(X_{i,j})\)</span> multiplied by their respective <strong>unknown regression coefficient</strong> <span class="math notranslate nohighlight">\(\beta_j\)</span> (<span class="math notranslate nohighlight">\(j = 1, \dots, p\)</span>).</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(\varepsilon_i\)</span> is the <strong>random noise</strong>.</p></li>
+</ul>
+<p>The equation above for <span class="math notranslate nohighlight">\(Y_i\)</span> is more detailed as follows:</p>
+<ul class="simple">
+<li><p>The response <span class="math notranslate nohighlight">\(Y_i\)</span> depends on the <strong>linear combination</strong> of the functions <span class="math notranslate nohighlight">\(g_j(\cdot)\)</span> of <span class="math notranslate nohighlight">\(p\)</span> regressors <span class="math notranslate nohighlight">\(X_{i, j}\)</span> of different types (continuous and discrete).</p></li>
+<li><p>Each function <span class="math notranslate nohighlight">\(g_j(X_{i,j})\)</span> has an associated regression coefficient. These parameters <span class="math notranslate nohighlight">\(\beta_{1}, \dots, \beta_{p}\)</span> represent how much the response is expected to increase or decrease when the function <span class="math notranslate nohighlight">\(g_j(X_{i,j})\)</span> changes by one unit of the <span class="math notranslate nohighlight">\(j\)</span>th regressor. An additional parameter <span class="math notranslate nohighlight">\(\beta_0\)</span> represents the mean of the response when all the <span class="math notranslate nohighlight">\(p\)</span> functions <span class="math notranslate nohighlight">\(g_j(X_{i,j})\)</span> are zero. All these elements represent the systematic component of the model.</p></li>
+</ul>
+<ul class="simple">
+<li><p>The term <span class="math notranslate nohighlight">\(\varepsilon_i\)</span> is an unobserved random variable and represents the random component. These variables are <strong>usually</strong> assumed to be <strong>normally distributed</strong> with <strong>mean of zero</strong> and a <strong>common variance</strong> <span class="math notranslate nohighlight">\(\sigma^2\)</span> (i.e., <strong>homoscedasticity</strong>). Moreover, all <span class="math notranslate nohighlight">\(\varepsilon_i\)</span>s are assumed to be <strong>independent</strong>. This can be represented as follows:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+\mathbb{E}(\varepsilon_i) = 0 \\
+\text{Var}(\varepsilon_i) = \sigma^2 \\
+\varepsilon_i \sim \mathcal{N}(0, \sigma^2) \\
+\varepsilon_i \perp \!\!\! \perp \varepsilon_k \; \; \; \; \text{for} \; i \neq k  \; \; \; \; \text{(independence)}.
+\end{gather*}\end{split}\]</div>
+<ul class="simple">
+<li><p>Hence, <strong>each <span class="math notranslate nohighlight">\(Y_i\)</span> is also assumed to be independent and normally distributed</strong>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+Y_i \mid X_{i, j} \sim \mathcal{N} \big( \beta_0 + \beta_1 g_1(X_{i, 1}) + \ldots + \beta_p g_p(X_{i,p}), \sigma^2 \big).
+\]</div>
+<section id="can-we-apply-linear-regression-here">
+<h3>1.1. Can We Apply Linear Regression Here?<a class="headerlink" href="#can-we-apply-linear-regression-here" title="Permalink to this headline">#</a></h3>
+<p>Having briefly discussed the components of the OLS model, let us explore three 2-<span class="math notranslate nohighlight">\(d\)</span> examples made with simulated data.</p>
+<p><strong>In-class Activity</strong></p>
+<p>In what example(s) can we apply linear regression?</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span> <span class="o">=</span> <span class="m">9</span><span class="p">,</span> <span class="n">repr.plot.width</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span>
+<span class="nf">plot_grid</span><span class="p">(</span><span class="nf">example_1</span><span class="p">(),</span> <span class="nf">example_2</span><span class="p">(),</span> <span class="nf">example_3</span><span class="p">(),</span> <span class="n">nrow</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_12_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_12_0.png" />
+</div>
+</div>
+<p><strong>Answer:</strong></p>
+<p>It turns out that the data used for the three plots above come from a linear model. Note that they are <strong>linear on their parameters (i.e., coefficients)</strong> but not on their corresponding regressor <span class="math notranslate nohighlight">\(X\)</span>. So we have to make three crucial remarks in these examples:</p>
+<ul class="simple">
+<li><p><strong>Example 1</strong> is the classical case of simple OLS regression.</p></li>
+<li><p>Conversely, <strong>Example 2</strong> does not show a clear linear relationship between both variables unless our linear approach makes two subsets of points. In that case, we could apply two local linear regression models (to be covered in this course in a further lecture).</p></li>
+<li><p>Finally, <strong>Example 3</strong> comes from a sinusoidal curve with an additional random noise (below, we provide more details on this case).</p></li>
+</ul>
+</section>
+<section id="what-makes-a-regression-model-linear">
+<h3>1.2. What makes a regression model “<em>linear</em>”?<a class="headerlink" href="#what-makes-a-regression-model-linear" title="Permalink to this headline">#</a></h3>
+<p>Let us retake the <strong>Example 3</strong> from our previous activity.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span> <span class="o">=</span> <span class="m">9</span><span class="p">,</span> <span class="n">repr.plot.width</span> <span class="o">=</span> <span class="m">15</span><span class="p">)</span>
+<span class="nf">example_3</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_15_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_15_0.png" />
+</div>
+</div>
+<p>It turns out that each synthetic data point was generated from a sinusoidal curve plus some normally distributed random noise:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+Y_i &amp;= \beta_0 + \beta_1 g(X_i) + \varepsilon_i \\
+&amp;= \beta_0 + \beta_1 \sin(X_i) + \varepsilon_i.
+\end{align*}\end{split}\]</div>
+<p>As we can see, this example can be modelled as an OLS model <strong>if we transform each <span class="math notranslate nohighlight">\(x_i\)</span> in the training set as <span class="math notranslate nohighlight">\(\sin(x_i)\)</span></strong>.</p>
+<p>Now, let use generalize all these previouse ideas. When a linear regression model has more than one regressor, then we call it <strong>multiple linear regression model</strong>.</p>
+<p>OLS implicate the identity function <span class="math notranslate nohighlight">\(g_j(X_{i, j}) = X_{i, j}\)</span>, leading to:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+Y_i &amp;= \beta_0 + \beta_1 g_1(X_{i, 1}) + \ldots + \beta_p g_p(X_{i,p}) + \varepsilon_i \\
+&amp;= \beta_0 + \beta_1 X_{i,1} + \ldots + \beta_p X_{i,p} + \varepsilon_i.
+\end{align*}\end{split}\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The use of the above identity function makes the model “linear” on the parameters, not the regressors.</p>
+</div>
+<p>Finally, suppose we have a training dataset of <span class="math notranslate nohighlight">\(n\)</span> observations, i.e. for <span class="math notranslate nohighlight">\(i = 1, \dots, n\)</span>. Then all the <span class="math notranslate nohighlight">\(X_{i, j}\)</span> become observed values <span class="math notranslate nohighlight">\(x_{i, j}\)</span> (note the lowercase), leading to the following conditional expected value of the OLS model above as:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{E}(Y_i \mid X_{i,j} = x_{i,j}) = \beta_0 + \beta_1 x_{i,1} + \ldots + \beta_p x_{i,p} \; \; \; \; \text{since} \; \; \; \; \mathbb{E}(\varepsilon_i) = 0.
+\]</div>
+<p>We can see that the regression coefficients’ interpretation is targeted to explain each regressor’s numerical <strong>association</strong> (<strong>or effect if we are conducting an experiment!</strong>) on the mean of the response, <strong>if we fulfill the assumptions on the random component</strong> <span class="math notranslate nohighlight">\(\varepsilon_i\)</span>.</p>
+</section>
+<section id="categorical-regressors">
+<h3>1.3. Categorical Regressors<a class="headerlink" href="#categorical-regressors" title="Permalink to this headline">#</a></h3>
+<p>If the <span class="math notranslate nohighlight">\(j\)</span>th explanatory variable of interest is continuous, its observed value is expressed as a single <span class="math notranslate nohighlight">\(x_{i,j}\)</span> for the <span class="math notranslate nohighlight">\(i\)</span>th observation.</p>
+<p>Suppose a explanatory variable of interest is nominal. In that case, we will need to use a dummy variable to identify the category to which each observation belongs. For instance, if a discussed categorical explanatory variable of interest has <span class="math notranslate nohighlight">\(m\)</span> categories or levels, we could define <span class="math notranslate nohighlight">\(m-1\)</span> dummy variables as shown in the coding scheme in <a class="reference internal" href="#dummy-var"><span class="std std-numref">Table 1</span></a>. Note that <strong>Level 1</strong> is taken as the baseline (reference) level: if the <span class="math notranslate nohighlight">\(i\)</span>th observation belongs to <strong>Level 1</strong> then all the dummy variables <span class="math notranslate nohighlight">\(x_{i,1}, \cdots, x_{i,(m -1)}\)</span> take on the value <span class="math notranslate nohighlight">\(0\)</span>. The choice of baseline has an impact on the interpretation of the regression coefficients. The baseline is related to the role of the intercept <span class="math notranslate nohighlight">\(\beta_0\)</span>.</p>
+<table class="table" id="dummy-var">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Dummy variables in a nominal regressor with <span class="math notranslate nohighlight">\(m\)</span> levels.</span><a class="headerlink" href="#dummy-var" title="Permalink to this table">#</a></caption>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Level</strong></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(x_{i, 1}\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(x_{i, 2}\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\cdots\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(x_{i, (m - 1)}\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\cdots\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(2\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\cdots\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\vdots\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\vdots\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\vdots\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\ddots\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\vdots\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(m\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\cdots\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(1\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="estimation">
+<h3>1.4. Estimation<a class="headerlink" href="#estimation" title="Permalink to this headline">#</a></h3>
+<p>The next matter to address is how to estimate our model parameters since these are unknown. In order to fit a linear regression model for a given training dataset of <span class="math notranslate nohighlight">\(n\)</span> observations, we have to estimate the <span class="math notranslate nohighlight">\(p + 2\)</span> parameters <span class="math notranslate nohighlight">\(\beta_0, \beta_1, \dots, \beta_p, \sigma^2\)</span> by <strong>minimizing the sum of squared residuals</strong> (i.e., <strong>least-squares estimation</strong>) or <strong>maximizing the likelihood function of the sample</strong>.</p>
+<p>The <strong>likelihood function</strong> is the <strong>joint probability density function</strong> of the observed data as a function of the unknown parameters <span class="math notranslate nohighlight">\(\beta_0, \beta_1, \dots, \beta_p, \sigma^2\)</span> we are willing to estimate. A particular distribution is assumed for the individual observations. Maximum likelihood estimation aims to find the values of those parameters for which the observed data is more likely. The likelihood function for the multiple linear regression model is described as follows:</p>
+<ul class="simple">
+<li><p>We assume a random sample of <span class="math notranslate nohighlight">\(n\)</span> elements. Thus, the Normal <span class="math notranslate nohighlight">\(Y_i\)</span>s are independent, which allows us to obtain the sample’s joint probability density function.</p></li>
+<li><p>The joint function is obtained by multiplying the <span class="math notranslate nohighlight">\(n\)</span> Normal probability density functions altogether. This joint probability density function is mathematically equal to the likelihood function of the observed data.</p></li>
+<li><p>The maximum likelihood method takes the first partial derivatives of the <strong>log-likelihood function</strong> with respect to <span class="math notranslate nohighlight">\(\beta_0, \beta_1, \dots, \beta_p, \sigma^2\)</span>. Then, we set these derivatives equal to zero and isolate the corresponding terms. This procedure yields the maximum likelihood estimates.</p></li>
+<li><p>The case of simple linear regression (as in <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span>, and <span class="math notranslate nohighlight">\(\sigma^2\)</span>) can be handled in scalar notation. However, in the presence of a considerable number of coefficients, it is more efficient to work with the model in matrix notation. Then, matrix calculus comes into play.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Now, we might wonder: <strong>how is maximum likelihood estimation (MLE) related to OLS?</strong> This is the point were the assumptions on the error component <span class="math notranslate nohighlight">\(\varepsilon_i\)</span> have a key role in MLE. If we make the corresponding mathematical derivations, <strong>it turns out that maximizing the log-likelihood function is equivalent to minimizing the sum of squared residuals</strong>.</p>
+</div>
+</section>
+<section id="inference">
+<h3>1.5. Inference<a class="headerlink" href="#inference" title="Permalink to this headline">#</a></h3>
+<p>The estimated model can be used for two purposes: <strong>inference</strong> and <strong>prediction</strong>. In terms of inference, we use the fitted model to identify the relationship between the response and regressors. We will need the <span class="math notranslate nohighlight">\(j\)</span>th estimated regression coefficient <span class="math notranslate nohighlight">\(\hat{\beta}_j\)</span> and its corresponding variability which is reflected in the <strong>standard error</strong> of the estimate, <span class="math notranslate nohighlight">\(\mbox{se}(\hat{\beta}_j)\)</span>. To determine the statistical significance of <span class="math notranslate nohighlight">\(\hat{\beta}_j\)</span>, we use the <strong>test statistic</strong></p>
+<div class="math notranslate nohighlight">
+\[t_j = \frac{\hat{\beta}_j}{\mbox{se}(\hat{\beta}_j)}\]</div>
+<p>to test the hypotheses</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0: \beta_j = 0 \\
+H_a: \beta_j \neq 0.
+\end{gather*}\end{split}\]</div>
+<p>A statistic like <span class="math notranslate nohighlight">\(t_j\)</span> is referred to as a <span class="math notranslate nohighlight">\(t\)</span>-value. It has a <span class="math notranslate nohighlight">\(t\)</span>-distribution <strong>under the null hypothesis</strong> <span class="math notranslate nohighlight">\(H_0\)</span> with <span class="math notranslate nohighlight">\(n - p - 1\)</span> degrees of freedom.</p>
+<p>We can obtain the corresponding <span class="math notranslate nohighlight">\(p\)</span>-values for each <span class="math notranslate nohighlight">\(\beta_j\)</span> associated to the <span class="math notranslate nohighlight">\(t\)</span>-values under the null hypothesis <span class="math notranslate nohighlight">\(H_0\)</span>. <strong>The smaller the <span class="math notranslate nohighlight">\(p\)</span>-value, the stronger the evidence against the null hypothesis <span class="math notranslate nohighlight">\(H_0\)</span> in our sample</strong>. Hence, small <span class="math notranslate nohighlight">\(p\)</span>-values (less than the significance level <span class="math notranslate nohighlight">\(\alpha\)</span>) indicate that the data provides evidence in favour of association between the response variable and the <span class="math notranslate nohighlight">\(j\)</span>th regressor. Similarly, given a specified <span class="math notranslate nohighlight">\((1-\alpha) \times 100\%\)</span> level of confidence, we can construct <strong>confidence intervals</strong> for the corresponding true value of <span class="math notranslate nohighlight">\(\beta_j\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{\beta}_j \pm t_{\alpha/2, n - p - 1}\mbox{se}(\hat{\beta}_j),
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{\alpha/2, n - p- 1}\)</span> is the upper <span class="math notranslate nohighlight">\(\alpha/2\)</span> quantile of the <span class="math notranslate nohighlight">\(t\)</span>-distribution with <span class="math notranslate nohighlight">\(n - p - 1\)</span> degrees of freedom.</p>
+</section>
+<section id="violations-of-assumptions">
+<h3>1.6. Violations of Assumptions<a class="headerlink" href="#violations-of-assumptions" title="Permalink to this headline">#</a></h3>
+<p>Recall the multiple linear regression model is defined as</p>
+<div class="math notranslate nohighlight">
+\[
+Y_i = \beta_0 + \beta_1 X_{i,1} + \ldots + \beta_p X_{i,p} + \varepsilon_i,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\varepsilon_i\)</span> (random component) is subject to these assumptions:</p>
+<div class="math notranslate nohighlight" id="equation-ols-assumptions">
+<span class="eqno">(2)<a class="headerlink" href="#equation-ols-assumptions" title="Permalink to this equation">#</a></span>\[\begin{split}\begin{gather}
+\mathbb{E}(\varepsilon_i) = 0 \\
+\text{Var}(\varepsilon_i) = \sigma^2 \\
+\varepsilon_i \sim \mathcal{N}(0, \sigma^2) \\
+\varepsilon_i \perp \!\!\! \perp \varepsilon_k \; \; \; \; \text{for} \; i \neq k  \; \; \; \; \text{(independence)}.
+\end{gather}\end{split}\]</div>
+<p>Now, what would happen if the assumptions in <a class="reference internal" href="#equation-ols-assumptions">(2)</a> are violated? The <strong>diagnostic plots</strong> below belong to simulated data whose OLS models violate the <strong>normality assumption</strong>.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">example_non_normality</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_23_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_23_0.png" />
+</div>
+</div>
+<p>Recall the <strong><span class="math notranslate nohighlight">\(Q\)</span>-<span class="math notranslate nohighlight">\(Q\)</span> plot</strong> and <strong>histogram of residuals</strong> are graphical tools that help us to assess the normality assumption as follows:</p>
+<ul class="simple">
+<li><p>In the case of the <span class="math notranslate nohighlight">\(Q\)</span>-<span class="math notranslate nohighlight">\(Q\)</span> plot, the ideal result is having all the data points lying on the 45° degree dotted line. This result means that all <strong>standardized residuals</strong> coming from the fitted model are equal to the theoretical quantiles coming from the <strong>Standard Normal distribution</strong>, i.e., <span class="math notranslate nohighlight">\(\mathcal{N}(0, 1)\)</span>. However, for the case above, a considerable proportion of these data points is not lying on the 45° degree dotted line, suggesting <strong>non-normality</strong>.</p></li>
+<li><p>For the histogram of residuals, we would expect a <strong>bell-shaped</strong> form as in the Normal distribution. Nonetheless, the plot above suggests a right-skewed distribution (also known as positive skewed).</p></li>
+</ul>
+<p>A distributional misspecification (i.e., assuming normality when it is not the case) has severe implications for the associated tests (<span class="math notranslate nohighlight">\(t\)</span> and <span class="math notranslate nohighlight">\(F\)</span>-tests). The distributions of the test statistics under <span class="math notranslate nohighlight">\(H_0\)</span> rely on the normality assumption!</p>
+<p>On the other hand, <strong>homoscedasticity</strong> can be assessed via the diagnostic plot of <strong>residuals vs. fitted values</strong>. The ideal result would show a uniform cloud of data points. However, the plot below (coming from an OLS model fitted with simulated data) shows a clear pattern composed of two funnel shapes. This pattern indicates non-constant variance, i.e., <strong>heteroscedasticity</strong>.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">example_heteroscedasticity</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_25_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_25_0.png" />
+</div>
+</div>
+<p>Below, you can find further information on the implications of assumption violations.</p>
+<section id="distributional-misspecification">
+<h4>1.6.1. Distributional Misspecification<a class="headerlink" href="#distributional-misspecification" title="Permalink to this headline">#</a></h4>
+<p>Fulfilling the model’s assumptions on the errors <span class="math notranslate nohighlight">\(\varepsilon_i\)</span> considerably impacts the statistical tests of the multiple linear regression model. The distributions of the test statistics, such as the <span class="math notranslate nohighlight">\(t\)</span> or the <span class="math notranslate nohighlight">\(F\)</span>-values, heavily rely on the normality of the <span class="math notranslate nohighlight">\(\varepsilon_i\)</span>s. Suppose we do not fulfil the normality on the random component. In that case, these test statistics will not be reliable unless <strong>our sample size <span class="math notranslate nohighlight">\(n\)</span> is large enough</strong> (i.e., <strong>an asymptotical approximation</strong>). Then, we are at stake of drawing misleading statistical conclusions on significance. Recall that hypothesis testing assumes a particular distribution under the null hypothesis <span class="math notranslate nohighlight">\(H_0\)</span>, which is related to these random components’ normality for this model in the <span class="math notranslate nohighlight">\(t\)</span> and <span class="math notranslate nohighlight">\(F\)</span>-tests.</p>
+</section>
+<section id="random-components-with-non-zero-mean">
+<h4>1.6.2. Random Components with Non-Zero Mean<a class="headerlink" href="#random-components-with-non-zero-mean" title="Permalink to this headline">#</a></h4>
+<p>Suppose we misspecified the mean in our multiple linear regression model for our random components, i.e., <span class="math notranslate nohighlight">\(\mathbb{E}(\varepsilon_i) = c \neq 0\)</span>. This misspecification would be a mild violation. It will be absorbed by the intercept <span class="math notranslate nohighlight">\(\beta_0\)</span> leading to</p>
+<div class="math notranslate nohighlight">
+\[\beta_0^* = \beta_0 + c\]</div>
+<p>and reflected in the model estimate for the intercept. Note that this <span class="math notranslate nohighlight">\(c\)</span> is constant over all the <span class="math notranslate nohighlight">\(n\)</span> <span class="math notranslate nohighlight">\(\varepsilon_i\)</span>s. Nonetheless, suppose there is a further regressor <span class="math notranslate nohighlight">\(X_{i, p+1}\)</span> not taken into account. In that case, we are at stake in obtaining <strong>biased model estimates</strong> and misleading statistical conclusions on significance. Therefore, we define this further regressor <span class="math notranslate nohighlight">\(X_{i, p+1}\)</span> as a <strong>lurking variable</strong>.</p>
+</section>
+<section id="heterocedasticity">
+<h4>1.6.3. Heterocedasticity<a class="headerlink" href="#heterocedasticity" title="Permalink to this headline">#</a></h4>
+<p>We already defined homoscedasticity as the fact that all <span class="math notranslate nohighlight">\(\varepsilon_i\)</span>s have <span class="math notranslate nohighlight">\(\sigma^2\)</span> as a common variance. However, this assumption commonly gets violated in multiple linear regression and is called heteroscedasticity: the variance of the <span class="math notranslate nohighlight">\(\varepsilon_i\)</span>s is not constant. <strong>A common approach to solve this problem is a response transformation, usually logarithmical if it is positive.</strong></p>
+</section>
+<section id="correlated-random-components">
+<h4>1.6.4. Correlated Random Components<a class="headerlink" href="#correlated-random-components" title="Permalink to this headline">#</a></h4>
+<p>When we have correlated random components, we are also at the stake of assuming misspecified distributions on our statistical tests. Alternative modelling could deal with this matter (e.g., <strong>mixed-effects models</strong> to be covered in this course). Again, this correlation leads to misspecified distributions in the <span class="math notranslate nohighlight">\(t\)</span> and <span class="math notranslate nohighlight">\(F\)</span>-tests since the test statistics heavily rely on independence under the null hypothesis <span class="math notranslate nohighlight">\(H_0\)</span>. The independence between random components could be confirmed via a <strong>Durbin-Watson test</strong>.</p>
+</section>
+</section>
+</section>
+<section id="when-ordinary-linear-regression-does-not-suffice">
+<h2>2. When Ordinary Linear Regression Does Not Suffice<a class="headerlink" href="#when-ordinary-linear-regression-does-not-suffice" title="Permalink to this headline">#</a></h2>
+<p>The OLS model from <strong>DSCI 561</strong> allows the response to take on any real number. Nonetheless, this is not entirely true in many real-life datasets.</p>
+<p>We usually encounter cases where the response’s range is restricted. Therefore, this linear regression model is not suitable. Thus, <strong>what can we do about it?</strong></p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The statistical literature offers an interesting set of models that could deal with different types of responses in real life. This set of models will be introduced in this course while providing illustrative examples we might encounter in data analysis.</p>
+</div>
+<p>We could list some examples where the response cannot be used in the OLS model:</p>
+<ul class="simple">
+<li><p><strong>Non-negative values.</strong> The median value of owner-occupied homes in USD 1000’s (<code class="docutils literal notranslate"><span class="pre">medv</span></code>) in the dataset <code class="docutils literal notranslate"><span class="pre">BostonHousing</span></code> <a class="reference external" href="http://ubc.summon.serialssolutions.com/2.0.0/link/0/eLvHCXMwnV07T8MwELYQDLDwKCDeyghDaOy0TixVSICourBVYrRc50wBNVRtQeLfc-fEpYAQiMF5nB9JbOf8Obn7zFgqzpP4i04wgANV7iQgPC-gZTOligRsAiYRhfWLOSya6pz_8EOfyyZhgjiRSp5m-RmteClj0sBpm5NBV-_2aq6H88QvLTfPEBznfijk88BE9pkWQd-nMWplAmOwC-NPd4PdBS-eYHjyxS_wG7njH59pk63XkDS6rPrQFluCssFWg8fytMF2bz684TBhrQ6m22zWGZnJ00UPCiLY7TT9WTR8JmP6-6iKHBNr0TTEmbKIEHLWcQWMUBDiED7XcrwNUwZxJTIPk1qww_rdm_51L66XcYh5KomtVGZGtJwcEO-NQplVvCDqQwlKcGvBtp2yhjxghZFu4KRSTqZcDFomFZDusuXyuYQ9FqlMICISMLA0L3WpqrhpXAvz2MLl-ywOTajHFVmHDlZsVMea6lhnufZ1rAWmD-38x_RZ6Ay6BigV8NDYor_kvPR9Z34ZAHgEqmT9qlPTxvCGgeOcHncPdIhhjCHnWKrQw9no4N9XP2Rr3DMp05ejI7Y8m7zAsaeZOPGvjN9evwO2Ww2r">(Harrison and Rubinfeld, 1978)</a>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The data frame <code class="docutils literal notranslate"><span class="pre">BostonHousing</span></code> contains information of 506 tracts of Boston from the 1970 US Census. Suppose we want to make inference or predict the response <code class="docutils literal notranslate"><span class="pre">medv</span></code>, subject to the other 13 regressors in the dataset. In this case, the nature of the response does not allow it to take on negative values.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">)</span>
+<span class="nf">str</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;data.frame&#39;:	506 obs. of  14 variables:
+ $ crim   : num  0.00632 0.02731 0.02729 0.03237 0.06905 ...
+ $ zn     : num  18 0 0 0 0 0 12.5 12.5 12.5 12.5 ...
+ $ indus  : num  2.31 7.07 7.07 2.18 2.18 2.18 7.87 7.87 7.87 7.87 ...
+ $ chas   : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ nox    : num  0.538 0.469 0.469 0.458 0.458 0.458 0.524 0.524 0.524 0.524 ...
+ $ rm     : num  6.58 6.42 7.18 7 7.15 ...
+ $ age    : num  65.2 78.9 61.1 45.8 54.2 58.7 66.6 96.1 100 85.9 ...
+ $ dis    : num  4.09 4.97 4.97 6.06 6.06 ...
+ $ rad    : num  1 2 2 3 3 3 5 5 5 5 ...
+ $ tax    : num  296 242 242 222 222 222 311 311 311 311 ...
+ $ ptratio: num  15.3 17.8 17.8 18.7 18.7 18.7 15.2 15.2 15.2 15.2 ...
+ $ b      : num  397 397 393 395 397 ...
+ $ lstat  : num  4.98 9.14 4.03 2.94 5.33 ...
+ $ medv   : num  24 21.6 34.7 33.4 36.2 28.7 22.9 27.1 16.5 18.9 ...
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p><strong>Binary outcomes (Success or Failure).</strong> Whether a tumour is <code class="docutils literal notranslate"><span class="pre">benign</span></code> or <code class="docutils literal notranslate"><span class="pre">malignant</span></code> (<code class="docutils literal notranslate"><span class="pre">Class</span></code>) in the dataset <code class="docutils literal notranslate"><span class="pre">BreastCancer</span></code> <a class="reference external" href="https://libkey.io/libraries/498/articles/35797998/full-text-file?utm_source=api_542">(Wolberg and Mangasarian, 1990)</a>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The data frame <code class="docutils literal notranslate"><span class="pre">BreastCancer</span></code> contains information of 699 biopsy results. Suppose we want to make inference or predict the response <code class="docutils literal notranslate"><span class="pre">Class</span></code>, subject to the other 9 regressors in the dataset (except <code class="docutils literal notranslate"><span class="pre">Id</span></code>). The response is discrete of binary type.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">BreastCancer</span><span class="p">)</span>
+<span class="nf">str</span><span class="p">(</span><span class="n">BreastCancer</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;data.frame&#39;:	699 obs. of  11 variables:
+ $ Id             : chr  &quot;1000025&quot; &quot;1002945&quot; &quot;1015425&quot; &quot;1016277&quot; ...
+ $ Cl.thickness   : Ord.factor w/ 10 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;&lt;..: 5 5 3 6 4 8 1 2 2 4 ...
+ $ Cell.size      : Ord.factor w/ 10 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;&lt;..: 1 4 1 8 1 10 1 1 1 2 ...
+ $ Cell.shape     : Ord.factor w/ 10 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;&lt;..: 1 4 1 8 1 10 1 2 1 1 ...
+ $ Marg.adhesion  : Ord.factor w/ 10 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;&lt;..: 1 5 1 1 3 8 1 1 1 1 ...
+ $ Epith.c.size   : Ord.factor w/ 10 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;&lt;..: 2 7 2 3 2 7 2 2 2 2 ...
+ $ Bare.nuclei    : Factor w/ 10 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 10 2 4 1 10 10 1 1 1 ...
+ $ Bl.cromatin    : Factor w/ 10 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 3 3 3 3 3 9 3 3 1 2 ...
+ $ Normal.nucleoli: Factor w/ 10 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 2 1 7 1 7 1 1 1 1 ...
+ $ Mitoses        : Factor w/ 9 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 1 1 1 1 5 1 ...
+ $ Class          : Factor w/ 2 levels &quot;benign&quot;,&quot;malignant&quot;: 1 1 1 1 1 2 1 1 1 1 ...
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p><strong>Count data.</strong> The number of physician office visits (<code class="docutils literal notranslate"><span class="pre">visits</span></code>) in the dataset <code class="docutils literal notranslate"><span class="pre">NMES1988</span></code> <a class="reference external" href="https://ubc.summon.serialssolutions.com/2.0.0/link/0/eLvHCXMwnV1tS8MwEA5uftAvvk6cL6N_oK5L0pfJUEr34gQZ4j75JaZLCsOtzqng_os_1kuTDjsVwU-lF9oL5Mg9x909hxDBZ469cick3G0GggcJ9YXHSUIDb6RyXn6DgsPmcqVUx89bY1SVZVYmmCX1AS_FE1nHOHCxiy9nz7aaHqWyrGaURgmVwEI1Te7yPlYM7BpLEtvHLi54IF2E-AWZUuNautvoId9FXlOy0vJX5G38x3Z30JaBnVao7WQXrcl0D23kXckv--ijNeXzx4u2nPJUtOrZi6VlAGstk88pLqjepaIkXlgAKK2OGv09WZi1c7MYWt2xQrjFT27G7yqJURSGhuncSCto2O0MoyvbTG6wAT4Ejg0xVSAVdTyn2PeJkBC4yKRBhUdHHuFurPphMSAzAXCPOwnAGgHOWkoVrwEoPUDl9CmVh6rySgDkGIlmTByaSCfmIwExYRx7SSBjX1bRID9MNtP8HEwzMWPG7vpRX6XYmwxgnMtUTY0DD8wIIw3CWNhvs-uwQ6kDEodFA4ZZr4oq2REuf2fOr4puMxv5puYPLT8qMZKjX3Qdo01Nk6sKK09Q-XX-Jk8zXogaWm9H94NeLbPxT5yWAM4">(Deb and Trivedi, 1997)</a>. This response takes on count values (<span class="math notranslate nohighlight">\(0, 1, 2, 3, \dots\)</span>).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">NMES1988</span></code> data frame contains cross-sectional data from the US National Medical Expenditure Survey (NMES) between 1987 and 1988. It is a sample of 4,406 individuals of ages 66 and above covered by Medicare with 19 different variables. Suppose we are interested in making inference or predicting the number of <code class="docutils literal notranslate"><span class="pre">visits</span></code> subject to regressors <code class="docutils literal notranslate"><span class="pre">age</span></code>, <code class="docutils literal notranslate"><span class="pre">gender</span></code>, and <code class="docutils literal notranslate"><span class="pre">income</span></code>.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">NMES1988</span><span class="p">)</span>
+<span class="nf">str</span><span class="p">(</span><span class="n">NMES1988</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;data.frame&#39;:	4406 obs. of  19 variables:
+ $ visits   : int  5 1 13 16 3 17 9 3 1 0 ...
+ $ nvisits  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ ovisits  : int  0 2 0 5 0 0 0 0 0 0 ...
+ $ novisits : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ emergency: int  0 2 3 1 0 0 0 0 0 0 ...
+ $ hospital : int  1 0 3 1 0 0 0 0 0 0 ...
+ $ health   : Factor w/ 3 levels &quot;poor&quot;,&quot;average&quot;,..: 2 2 1 1 2 1 2 2 2 2 ...
+  ..- attr(*, &quot;contrasts&quot;)= num [1:3, 1:2] 1 0 0 0 0 1
+  .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. .. ..$ : chr [1:3] &quot;poor&quot; &quot;average&quot; &quot;excellent&quot;
+  .. .. ..$ : chr [1:2] &quot;poor&quot; &quot;excellent&quot;
+ $ chronic  : int  2 2 4 2 2 5 0 0 0 0 ...
+ $ adl      : Factor w/ 2 levels &quot;normal&quot;,&quot;limited&quot;: 1 1 2 2 2 2 1 1 1 1 ...
+ $ region   : Factor w/ 4 levels &quot;northeast&quot;,&quot;midwest&quot;,..: 4 4 4 4 4 4 2 2 2 2 ...
+  ..- attr(*, &quot;contrasts&quot;)= num [1:4, 1:3] 1 0 0 0 0 1 0 0 0 0 ...
+  .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. .. ..$ : chr [1:4] &quot;northeast&quot; &quot;midwest&quot; &quot;west&quot; &quot;other&quot;
+  .. .. ..$ : chr [1:3] &quot;northeast&quot; &quot;midwest&quot; &quot;west&quot;
+ $ age      : num  6.9 7.4 6.6 7.6 7.9 6.6 7.5 8.7 7.3 7.8 ...
+ $ afam     : Factor w/ 2 levels &quot;no&quot;,&quot;yes&quot;: 2 1 2 1 1 1 1 1 1 1 ...
+ $ gender   : Factor w/ 2 levels &quot;female&quot;,&quot;male&quot;: 2 1 1 2 1 1 1 1 1 1 ...
+ $ married  : Factor w/ 2 levels &quot;no&quot;,&quot;yes&quot;: 2 2 1 2 2 1 1 1 1 1 ...
+ $ school   : int  6 10 10 3 6 7 8 8 8 8 ...
+ $ income   : num  2.881 2.748 0.653 0.659 0.659 ...
+ $ employed : Factor w/ 2 levels &quot;no&quot;,&quot;yes&quot;: 2 1 1 1 1 1 1 1 1 1 ...
+ $ insurance: Factor w/ 2 levels &quot;no&quot;,&quot;yes&quot;: 2 2 1 2 2 1 2 2 2 2 ...
+ $ medicaid : Factor w/ 2 levels &quot;no&quot;,&quot;yes&quot;: 1 1 2 1 1 2 1 1 1 1 ...
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="paving-the-way-to-generalized-linear-models">
+<h2>3. Paving the Way to Generalized Linear Models<a class="headerlink" href="#paving-the-way-to-generalized-linear-models" title="Permalink to this headline">#</a></h2>
+<p>When we are using a set of regressors (or <strong>predictors</strong>) to explain (or <strong>predict</strong>) our response, we have to establish a mathematical relationship between them. This is called a <strong>functional form</strong> (i.e., <strong>model function</strong>). For instance, in the case of the regressor <span class="math notranslate nohighlight">\(X\)</span> and response <span class="math notranslate nohighlight">\(Y\)</span>, we could have:</p>
+<ul class="simple">
+<li><p><strong>Linear:</strong> <span class="math notranslate nohighlight">\(Y = \beta_0 + \beta_1 X\)</span>.</p></li>
+<li><p><strong>Exponential:</strong> <span class="math notranslate nohighlight">\(Y = e^{\beta_0 + \beta_1 X}\)</span>.</p></li>
+<li><p><strong>In general:</strong> <span class="math notranslate nohighlight">\(Y = f(X)\)</span>.</p></li>
+</ul>
+<section id="nature-of-the-model-function">
+<h3>3.1. Nature of the Model Function<a class="headerlink" href="#nature-of-the-model-function" title="Permalink to this headline">#</a></h3>
+<p>Once we establish the model function between our variables, we have to specify the nature of it:</p>
+<ul class="simple">
+<li><p><strong>Deterministic.</strong> For each one of the values of the regressor <span class="math notranslate nohighlight">\(X\)</span>, there is a single value of <span class="math notranslate nohighlight">\(Y\)</span>.</p></li>
+<li><p><strong>Stochastic.</strong>  Each value of <span class="math notranslate nohighlight">\(X\)</span> has a probability distribution associated to <span class="math notranslate nohighlight">\(Y\)</span>.</p></li>
+</ul>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span> <span class="o">=</span> <span class="m">9</span><span class="p">,</span> <span class="n">repr.plot.width</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span>
+<span class="nf">plot_grid</span><span class="p">(</span><span class="nf">example_deterministic_relation</span><span class="p">(),</span> <span class="nf">example_stochastic_relation</span><span class="p">(),</span> <span class="n">nrow</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_45_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_45_0.png" />
+</div>
+</div>
+</section>
+<section id="the-regression-problem">
+<h3>3.2. The Regression Problem<a class="headerlink" href="#the-regression-problem" title="Permalink to this headline">#</a></h3>
+<p>The term <strong>regression</strong> can be extended beyond a linear relationship between the response and regressors. From the previous review on OLS multiple linear regression, the model can be used for two purposes:</p>
+<ul class="simple">
+<li><p><strong>Inference.</strong> We want to determine whether there is a significant statistical association between the response and regressor (e.g., <span class="math notranslate nohighlight">\(t\)</span>-tests in ordinary multiple linear regression) and estimate the <strong>effect size</strong>.</p>
+<ul>
+<li><p>There is uncertainty associated with this estimation (confidence intervals).</p></li>
+</ul>
+</li>
+<li><p><strong>Prediction.</strong> Given new values for the regressors, we want to predict the corresponding value of the response subject to the effect estimates.</p>
+<ul>
+<li><p>There is uncertainty associated with this prediction (prediction intervals).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="black-box-models">
+<h3>3.3. Black-box Models<a class="headerlink" href="#black-box-models" title="Permalink to this headline">#</a></h3>
+<p>A model such as in the case of multiple linear regression, specifies the functional form between the regressors and the response along with assumptions on the system or phenomenon we aim to model. This allows interpretability.</p>
+<p>On the other hand, a <strong>black-box model</strong> is focused on <strong>optimizing predictions</strong> subject to a set of regressors with less attention on the internal model’s process.</p>
+</section>
+<section id="interpretability-in-linear-models">
+<h3>3.4. Interpretability in Linear Models<a class="headerlink" href="#interpretability-in-linear-models" title="Permalink to this headline">#</a></h3>
+<p>A crucial characteristic of linear models is their relative easiness to interpret the effects of the regressors on the response (via the model’s coefficients). Moreover, their predictive ability is fair in general. An additional takeaway on this class of tools is their ability to go beyond the conditioned modelling of the response’s means (e.g., medians or certain quantiles).</p>
+</section>
+<section id="the-types-of-parametric-assumptions">
+<h3>3.5. The Types of Parametric Assumptions<a class="headerlink" href="#the-types-of-parametric-assumptions" title="Permalink to this headline">#</a></h3>
+<p>The concept of a <strong>parametric model</strong> varies depending on the field:</p>
+<ul class="simple">
+<li><p>In Computer Science, a parametric model assumes a functional relationship between the regressors and response (e.g., linear).</p></li>
+<li><p>In Statistics, a parametric model has distributional assumptions on its components.</p></li>
+</ul>
+</section>
+<section id="an-example-where-ols-regression-totally-goes-wrong">
+<h3>3.6. An example where OLS regression totally goes wrong<a class="headerlink" href="#an-example-where-ols-regression-totally-goes-wrong" title="Permalink to this headline">#</a></h3>
+<p>We have to be careful when using linear models in specific complex datasets if we only appeal to their easiness of interpretability. When we do not capture the right functional form between the regressors and the response, the chances of having a misspecified model are high. For the sake of this example, we will build a simulated dataset similar to the previous <strong>Example 3</strong>. Assume that the true functional form in this 2-<span class="math notranslate nohighlight">\(d\)</span> example is as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+Y_i &amp;= \beta_0 + \beta_1 g(X_i) + \varepsilon_i \\
+&amp;= \beta_0 + \beta_1 \sin(X_i) + \varepsilon_i \\
+&amp;= 5 + 10 \sin(X_i) + \varepsilon_i
+\end{align*}\end{split}\]</div>
+<p>with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+\mathbb{E}(\varepsilon_i) = 0 \\
+\text{Var}(\varepsilon_i) = \sigma^2 \\
+\varepsilon_i \sim \mathcal{N}(0, \sigma^2) \\
+\varepsilon_i \perp \!\!\! \perp \varepsilon_k \; \; \; \; \text{for} \; i \neq k  \; \; \; \; \text{(independence)}.
+\end{gather*}\end{split}\]</div>
+<p>We simulate a dataset of <span class="math notranslate nohighlight">\(n = 234\)</span> observations with <span class="math notranslate nohighlight">\(x_i \in [2, 13.65]\)</span>. Recall that function <code class="docutils literal notranslate"><span class="pre">rnorm()</span></code> provides our Normal error components with the parameters specified above. The code below simulates these data and then provides a scatterplot.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">123</span><span class="p">)</span>
+<span class="n">sin_data</span> <span class="o">&lt;-</span> <span class="nf">tibble</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">13.65</span><span class="p">,</span> <span class="m">0.05</span><span class="p">),</span> <span class="n">Y</span> <span class="o">=</span> <span class="m">5</span> <span class="o">+</span> <span class="m">10</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">+</span> <span class="nf">rnorm</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="nf">seq</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">13.65</span><span class="p">,</span> <span class="m">0.05</span><span class="p">)),</span> <span class="m">0</span><span class="p">,</span> <span class="m">1.5</span><span class="p">))</span>
+<span class="nf">suppressMessages</span><span class="p">(</span><span class="nf">print</span><span class="p">(</span><span class="n">sin_data</span> <span class="o">%&gt;%</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_smooth</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">method</span> <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> <span class="n">se</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="nf">bquote</span><span class="p">(</span><span class="s">&quot;Linear regression of &quot;</span> <span class="o">~</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">beta</span><span class="p">[</span><span class="m">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+      <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">30</span><span class="p">),</span>
+      <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+      <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">27</span><span class="p">)</span>
+    <span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_51_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_51_0.png" />
+</div>
+</div>
+<p>The code above also fits a linear regression, with <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;lm&quot;</span></code> via <code class="docutils literal notranslate"><span class="pre">geom_smooth()</span></code>, assuming that the “right functional form” is</p>
+<div class="math notranslate nohighlight">
+\[Y_i = \beta_0^* + \beta_1^* X_i + \varepsilon_i.\]</div>
+<p>Nonetheless, using <code class="docutils literal notranslate"><span class="pre">lm()</span></code> in <code class="docutils literal notranslate"><span class="pre">sin_function_model</span></code>, the fitted regression line is <strong>almost flat</strong> (i.e., <span class="math notranslate nohighlight">\(\hat{\beta}_1^* = -0.033\)</span>) and located on <span class="math notranslate nohighlight">\(y = 4.545\)</span> (i.e., <span class="math notranslate nohighlight">\(\hat{\beta}_0^* = 4.545\)</span>). Note that the slope is not even significant given a <span class="math notranslate nohighlight">\(p \text{-value} = 0.806\)</span>. This result is expected in a <strong>misspecified model</strong> since the OLS method attempts to reduce the squared distance between the observed and estimated response values <strong>across all points</strong>. Hence, this attempt has a serious impact on a sinusoidal curve, like in this example.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sin_function_model</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">Y</span> <span class="o">~</span> <span class="n">X</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">sin_data</span><span class="p">)</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">sin_function_model</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+<span class="nf">glance</span><span class="p">(</span><span class="n">sin_function_model</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 5</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td> 4.545</td><td>1.136</td><td> 4.001</td><td>0.000</td></tr>
+	<tr><td>X          </td><td>-0.033</td><td>0.133</td><td>-0.246</td><td>0.806</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 12</caption>
+<thead>
+	<tr><th scope=col>r.squared</th><th scope=col>adj.r.squared</th><th scope=col>sigma</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>df</th><th scope=col>logLik</th><th scope=col>AIC</th><th scope=col>BIC</th><th scope=col>deviance</th><th scope=col>df.residual</th><th scope=col>nobs</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>0</td><td>-0.004</td><td>6.886</td><td>0.061</td><td>0.806</td><td>1</td><td>-782.543</td><td>1571.086</td><td>1581.452</td><td>11002.15</td><td>232</td><td>234</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Before concluding about the model estimates, we have to make sure that we are setting up an adequate functional form. This is why <strong>feature engineering</strong> is essential as in <strong>DSCI 573</strong>.</p>
+</div>
+</section>
+<section id="restricted-response-ranges-in-linear-regression">
+<h3>3.7. Restricted Response Ranges in Linear Regression<a class="headerlink" href="#restricted-response-ranges-in-linear-regression" title="Permalink to this headline">#</a></h3>
+<p>We initially listed different response types where the ranges are restricted. Now, the next matter to address is how to retain the easiness in model’s interpretability. Recall that we might be using the model for inference purposes, and not predictions. Hence, a black-box model will not provide a straightforward interpretation.</p>
+<p>We could use the following three modelling alternatives:</p>
+<ul class="simple">
+<li><p><strong>Data transformations.</strong> For example, logarithmic transformations on the response.</p></li>
+<li><p><strong>Scientifically-backed functions.</strong> We rely on subject-matter expertise. This backs regression modelling with actual scientific models. The theoretically-derived setup will indicate a meaningful relationship between response and regressors, whose parameters will be estimated with the model fitting.</p></li>
+<li><p><strong>Link functions.</strong> This a core concept in GLMs!</p></li>
+</ul>
+</section>
+<section id="link-function">
+<h3>3.8. Link Function<a class="headerlink" href="#link-function" title="Permalink to this headline">#</a></h3>
+<p>OLS regression models a continuous response <span class="math notranslate nohighlight">\(Y_i\)</span> (a random variable) via its conditioned mean (or expected value) <span class="math notranslate nohighlight">\(\mu_i\)</span> subject to <span class="math notranslate nohighlight">\(p\)</span> regressors <span class="math notranslate nohighlight">\(X_{i,j}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mu_i = \mathbb{E}(Y_i \mid X_{i,1}, \ldots, X_{i,p}) = \beta_0 + \beta_1 X_{i,1} + \ldots + \beta_p X_{i,p} \; \; \text{since} \; \; \mathbb{E}(\varepsilon_i) = 0.
+\]</div>
+<p>Nonetheless, modelling the mean <span class="math notranslate nohighlight">\(\mu_i\)</span> of a discrete-type response (such as binary or a count) is not straightforward. Hence, we rely on a <strong>monotonic</strong> and <strong>differentiable</strong> function <span class="math notranslate nohighlight">\(h(\mu_i)\)</span> called the <strong>link function</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+h(\mu_i) = \eta_i = \beta_0 + \beta_1 X_{i,1} + \beta_2 X_{i,2} + \ldots + \beta_p X_{i,p} \; \; \; \; \text{for} \; i = 1, \ldots, n.
+\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The link function <span class="math notranslate nohighlight">\(h(\mu_i)\)</span> is a crucial element in a GLM since it allows us to establish the functional relationship between the response and the regressor in this class of linear model. Note that the form of this link function will also change how we will interpret our estimated regression coefficients <span class="math notranslate nohighlight">\(\hat{\beta}_j\)</span>.</p>
+</div>
+<p><strong>Why monotonic and differentiable?</strong></p>
+<ul class="simple">
+<li><p>The link function needs to be monotonic so we can allow putting the systematic component <span class="math notranslate nohighlight">\(\eta_i\)</span> in terms of the corresponding mean <span class="math notranslate nohighlight">\(\mu_i\)</span>, i.e.:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\mu_i = h^{-1}(\eta_i).\]</div>
+<ul class="simple">
+<li><p>Furthermore, it needs to be differentiable since we rely on <strong>maximum likelihood estimation</strong> to obtain <span class="math notranslate nohighlight">\(\hat{\beta}_0, \hat{\beta}_1, \dots, \hat{\beta}_p\)</span>.</p></li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>You will put both characteristics of the link function into practice in the challenging <strong>Exercise 1</strong> of <code class="docutils literal notranslate"><span class="pre">lab1</span></code>.</p>
+</div>
+<p>A GLM has the components of the conceptual regression model in a training set of <span class="math notranslate nohighlight">\(n\)</span> elements as:</p>
+<ul class="simple">
+<li><p><strong>Random component.</strong> Each <em>response</em> <span class="math notranslate nohighlight">\(Y_1,\ldots,Y_n\)</span> is a random variable with its respective mean <span class="math notranslate nohighlight">\(\mu_i\)</span>.</p></li>
+<li><p><strong>Systematic component.</strong> How the <span class="math notranslate nohighlight">\(p\)</span> regressors come into the model denoted as a <strong>linear combination</strong>:</p></li>
+</ul>
+<div class="math notranslate nohighlight" id="equation-eq-glm-systematic-component">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-glm-systematic-component" title="Permalink to this equation">#</a></span>\[
+\eta_i = \beta_0 + \beta_1 X_{i,1} + \beta_2 X_{i,2} + \ldots + \beta_p X_{i,p} \; \; \; \; \text{for} \; i = 1, \ldots, n.
+\]</div>
+<ul class="simple">
+<li><p><strong>Link function.</strong> The element that connects the <strong>random component</strong> with the <strong>systematic component</strong> <span class="math notranslate nohighlight">\(\eta_i\)</span>. The connection is made through <span class="math notranslate nohighlight">\(h(\mu_i)\)</span>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+h(\mu_i) = \eta_i.
+\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The <strong>linear model</strong> in <a class="reference internal" href="#equation-eq-glm-systematic-component">(3)</a> does not have an explicit <strong>random component</strong> as in the OLS model with a continuous response. <strong>The randomness is expressed directly in the response <span class="math notranslate nohighlight">\(Y_i\)</span> whose mean is <span class="math notranslate nohighlight">\(\mu_i\)</span>.</strong></p>
+</div>
+</section>
+</section>
+<section id="binary-logistic-regression">
+<h2>4. Binary Logistic Regression<a class="headerlink" href="#binary-logistic-regression" title="Permalink to this headline">#</a></h2>
+<p>Binary Logistic regression is the most basic GLM. You are already familiar with this model from <strong>DSCI 571</strong>. Let us dig into this model by introducing an appropriate dataset.</p>
+<section id="the-breast-cancer-dataset">
+<h3>4.1. The Breast Cancer Dataset<a class="headerlink" href="#the-breast-cancer-dataset" title="Permalink to this headline">#</a></h3>
+<p>The data frame <code class="docutils literal notranslate"><span class="pre">breast_cancer</span></code> is the Wisconsin Diagnostic Breast Cancer dataset (<a class="reference external" href="http://ubc.summon.serialssolutions.com/2.0.0/link/0/eLvHCXMwlV1Nb9QwEB2xPSA4tHQLohRKDoDgsDSJndiRKlApVBx74PNk2bGDKui2jbf8Ff4uM46tbpZKFZdIO55NvNLLeLx-8waAla_z2UpMEAZXtlZKzllZGSk7WTBdtDa3ts6N61aoOnUqjSGWZaAJhkN9zJfML7dHCi-yfnt-MaPmUXTIGjtpTGAi2cDr-rKkvFsPbQwYBpyafxsvQMTDbPEOVxE5yQSH8iZKHH2iKv4TrsMadLQBKk03kU9WagPHAo___7vuwXpMT7ODAU-bcMvNp3A7seOnsJG6QGQxKEzh7pKk4RQ2o91nL6Oi9ast-LN_qvufb94RAX6xvxc-ZIPtkFDXj23vB_rfiR-b9dxmx_3ZdUO_T_TYgFtsfIXHtuOBinaK84wD9-Hz0YdPhx9nsSPEDPeBJWmp6pJ3VS1tzlvR8Ua6WljWlm3RaMkMs52R1jmJWGu4a6wwtugaaauGtQWaH8Da_GzuHkJWVlpwbgpthKOz3aZsmeRWC9mJxnG7DS8STNT5IPyhaMOEO0xF_WkUZ4qrSuTomEB0k-MzgpiK3UXx4un_F_9DX3qvDjCPw2yPMbxfcCPwLXrd6lgngdMmqa5lx6cJqyoiNTzQLz3xeRq4YWZbAYxXXgGJ27CT8K5iZPOqJEFAUnl8dP2XduDOUPVPjObHsLboL92TIGmxCxPx9TteMcDshnf0L2aRR50">Mangasarian et al., 1995</a>). It has a <strong>binary</strong> response <code class="docutils literal notranslate"><span class="pre">target</span></code>: whether the tumour is <code class="docutils literal notranslate"><span class="pre">benign</span></code> or <code class="docutils literal notranslate"><span class="pre">malignant</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This training dataset contains  569 observations from a digitized image of a fine needle aspirate (FNA) of a breast mass. The dataset details 30 real-valued characteristics (i.e., continuous regressors) plus the binary response and <code class="docutils literal notranslate"><span class="pre">ID</span></code> number. We will start working with the response <code class="docutils literal notranslate"><span class="pre">target</span></code> subject to the regressor <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code>.</p>
+</div>
+<div class="admonition-main-statistical-inquiry admonition">
+<p class="admonition-title">Main statistical inquiry</p>
+<p>Let us suppose we want to assess whether <code class="docutils literal notranslate"><span class="pre">target</span></code> and <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> are statistically associated and by how much.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">breast_cancer</span> <span class="o">&lt;-</span> <span class="nf">suppressWarnings</span><span class="p">(</span><span class="nf">suppressMessages</span><span class="p">(</span><span class="nf">read_csv</span><span class="p">(</span><span class="s">&quot;datasets/breast_cancer.csv&quot;</span><span class="p">)))</span>
+
+<span class="n">breast_cancer_binary</span> <span class="o">&lt;-</span> <span class="n">breast_cancer</span> <span class="o">%&gt;%</span>
+  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">mean_radius</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="n">breast_cancer_binary</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 569 × 2</caption>
+<thead>
+	<tr><th scope=col>mean_radius</th><th scope=col>target</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>17.99</td><td>malignant</td></tr>
+	<tr><td>20.57</td><td>malignant</td></tr>
+	<tr><td>19.69</td><td>malignant</td></tr>
+	<tr><td>⋮</td><td>⋮</td></tr>
+	<tr><td>16.60</td><td>malignant</td></tr>
+	<tr><td>20.60</td><td>malignant</td></tr>
+	<tr><td> 7.76</td><td>benign   </td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We have to set our binary response <span class="math notranslate nohighlight">\(Y_i\)</span> mathematically as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+Y_i =
+\begin{cases}
+1 \; \; \; \; \mbox{if the $i$th tumour is malignant},\\
+0 \; \; \; \; 	\mbox{otherwise.}
+\end{cases}
+\end{split}\]</div>
+<p>The “1” category is referred as <strong>success</strong>. Note each <span class="math notranslate nohighlight">\(Y_i\)</span> is a <strong>Bernoulli</strong> trial whose <strong>probability of success</strong> is <span class="math notranslate nohighlight">\(\pi_i\)</span>, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[Y_i \sim \text{Bernoulli}(\pi_i).\]</div>
+</section>
+<section id="using-ordinary-least-squares-to-model-probabilities">
+<h3>4.2. Using Ordinary Least-Squares to Model Probabilities<a class="headerlink" href="#using-ordinary-least-squares-to-model-probabilities" title="Permalink to this headline">#</a></h3>
+<p>We will take a “<em>naive</em>” approach to address our main statistical inquiry. Suppose we use the “1” and “0” in the response as probabilities, and we estimate an OLS regression model to predict the mean of <span class="math notranslate nohighlight">\(Y_i\)</span> subject to <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code>, <span class="math notranslate nohighlight">\(X_{\texttt{mr}_i}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{E}(Y_i \mid X_{\texttt{mr}_i}) = \pi_i = \beta_0 + \beta_1 X_{\texttt{mr}_i}
+\]</div>
+<p>The code below transforms the response <code class="docutils literal notranslate"><span class="pre">target</span></code>, via <code class="docutils literal notranslate"><span class="pre">mutate()</span></code>, as a probability with two possible outcomes: <code class="docutils literal notranslate"><span class="pre">1</span></code> for <code class="docutils literal notranslate"><span class="pre">malignant</span></code> and <code class="docutils literal notranslate"><span class="pre">0</span></code> for <code class="docutils literal notranslate"><span class="pre">benign</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">breast_cancer_binary</span> <span class="o">&lt;-</span> <span class="n">breast_cancer_binary</span> <span class="o">%&gt;%</span> 
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="nf">if_else</span><span class="p">(</span><span class="n">target</span> <span class="o">==</span> <span class="s">&quot;malignant&quot;</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">))</span>
+<span class="n">breast_cancer_binary</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 569 × 2</caption>
+<thead>
+	<tr><th scope=col>mean_radius</th><th scope=col>target</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>17.99</td><td>1</td></tr>
+	<tr><td>20.57</td><td>1</td></tr>
+	<tr><td>19.69</td><td>1</td></tr>
+	<tr><td>⋮</td><td>⋮</td></tr>
+	<tr><td>16.60</td><td>1</td></tr>
+	<tr><td>20.60</td><td>1</td></tr>
+	<tr><td> 7.76</td><td>0</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Thus, the plot below shows two subsets of points located on two horizontal lines. The OLS-fitted values of the 569 observations, with <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> as a regressor, are shown on the blue line. Recall that a probability cannot be negative or larger than <span class="math notranslate nohighlight">\(1\)</span>. Nonetheless, values larger than <span class="math notranslate nohighlight">\(20\)</span> for <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> generate predictions larger than <span class="math notranslate nohighlight">\(1\)</span>, which is absurd for a probability. Moreover, small values of <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> generate predictions of less than <span class="math notranslate nohighlight">\(0\)</span>, which again does not make sense.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">breast_cancer_plot</span> <span class="o">&lt;-</span> <span class="n">breast_cancer_binary</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">mean_radius</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_smooth</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">mean_radius</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="s">&quot;lm&quot;</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span> <span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span> <span class="n">se</span> <span class="o">=</span> <span class="kc">FALSE</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Prob. of a Malignant Tumour&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s">&quot;Mean Radius&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;OLS Fitted Regression Line&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">31</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">27</span><span class="p">)</span>
+  <span class="p">)</span> 
+<span class="n">breast_cancer_plot</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_66_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_66_0.png" />
+</div>
+</div>
+</section>
+<section id="the-logit-function">
+<h3>4.3. The Logit Function<a class="headerlink" href="#the-logit-function" title="Permalink to this headline">#</a></h3>
+<p>Now, you might wonder: <strong>is there a way to overcome the above out-of-range issue?</strong> Of course, there is a way involving a link function. Nonetheless, a simple logarithmic transformation will not save the day here since we have <span class="math notranslate nohighlight">\(Y_i\)</span> values equal to zero. Therefore, let us play around with the distribution theory from <strong>DSCI 551</strong>. Recall these facts:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+Y_i \sim \text{Bernoulli}(\pi_i) \\
+\mathbb{E}(Y_i) = \pi_i.
+\end{gather*}\end{split}\]</div>
+<p>Given that the <strong>mean</strong> of a Bernoulli random variable <span class="math notranslate nohighlight">\(Y_i\)</span> is <span class="math notranslate nohighlight">\(\pi_i\)</span>, we can establish the following link function (which is <strong>monotonic and differentiable</strong>):</p>
+<div class="math notranslate nohighlight">
+\[
+h(\pi_i) = \mbox{logit}(\pi_i)= \log\left(\frac{\pi_i}{1 - \pi_i}\right) = \beta_0 + \beta_1 X_{\texttt{mr}_i}.
+\]</div>
+<p>The link function <span class="math notranslate nohighlight">\(h(\pi_i)\)</span> is called the <strong>logarithm of the odds</strong> or <strong>logit function</strong>. This logit function <span class="math notranslate nohighlight">\(\log\left(\frac{\pi_i}{1 - \pi_i}\right)\)</span> covers the entire real line, which solves the out-of-range problem from OLS in this case.</p>
+<p>We already highlighted this link function is monotonic. How can we transform back <span class="math notranslate nohighlight">\(h(\pi_i)\)</span> to the probability <span class="math notranslate nohighlight">\(\pi_i\)</span>? With some algebraic arrangements (part of the challenging <strong>Exercise 1</strong> of <code class="docutils literal notranslate"><span class="pre">lab1</span></code>), we can come up with the following expression:</p>
+<div class="math notranslate nohighlight">
+\[
+\pi_i = \frac{\exp \big( \beta_0 + \beta_1 X_{\texttt{mr}_i} \big) }{ \big[ 1 + \exp \big( \beta_0 + \beta_1 X_{\texttt{mr}_i} \big) \big] } \in [0,1].
+\]</div>
+<p>Note that this whole modelling framework via this link function is called <strong>Binary Logistic regression</strong>.</p>
+<p>The plot below fits this <strong>simple</strong> (we only have one regressor!) Binary Logistic regression using <code class="docutils literal notranslate"><span class="pre">breast_cancer_binary</span></code> with <code class="docutils literal notranslate"><span class="pre">target</span></code> as a response and <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> as a regressor. We can do this via <code class="docutils literal notranslate"><span class="pre">geom_smooth()</span></code> using <code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">&quot;glm&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">method.args</span> <span class="pre">=</span> <span class="pre">c(family</span> <span class="pre">=</span> <span class="pre">binomial)</span></code>. Then, we obtain the <strong>in-sample predictions</strong> <span class="math notranslate nohighlight">\(\hat{\pi}_i\)</span> and connect them as a red line. This red <span class="math notranslate nohighlight">\(S\)</span>-shaped function above is called the <strong>sigmoid function</strong>. Note this function covers all the real line of <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> but is constrained between 0 and 1 for the probability of encountering a malignant tumour.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">breast_cancer_plot</span> <span class="o">&lt;-</span> <span class="n">breast_cancer_plot</span> <span class="o">+</span>
+  <span class="nf">geom_smooth</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">mean_radius</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="s">&quot;glm&quot;</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span> <span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span>
+    <span class="n">method.args</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span><span class="p">),</span> <span class="n">se</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;OLS (Blue) and Binary Logistic (Red) Fitted Regression Lines&quot;</span><span class="p">)</span>
+<span class="n">breast_cancer_plot</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_70_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_70_0.png" />
+</div>
+</div>
+</section>
+<section id="general-modelling-framework-of-the-binary-logistic-regression">
+<h3>4.4. General Modelling Framework of the Binary Logistic Regression<a class="headerlink" href="#general-modelling-framework-of-the-binary-logistic-regression" title="Permalink to this headline">#</a></h3>
+<p>The Binary Logistic regression model has a response variable in the form:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+Y_i =
+\begin{cases}
+1 \; \; \; \; \mbox{if the $i$th observation is a success},\\
+0 \; \; \; \; \mbox{otherwise.}
+\end{cases}
+\end{split}\]</div>
+<p>As the response variable can only take the values <span class="math notranslate nohighlight">\(0\)</span> or <span class="math notranslate nohighlight">\(1\)</span>, the key parameter becomes the probability that <span class="math notranslate nohighlight">\(Y_i\)</span> takes on the value of <span class="math notranslate nohighlight">\(1\)</span>, i.e. the probability of success, denoted as <span class="math notranslate nohighlight">\(\pi_i\)</span>. Hence:</p>
+<div class="math notranslate nohighlight">
+\[
+Y_i \sim \text{Bernoulli}(\pi_i).
+\]</div>
+<p>The Binary Logistic regression approach models the probability of success, <span class="math notranslate nohighlight">\(\pi_i\)</span>, of the binary response <span class="math notranslate nohighlight">\(Y_i\)</span>. To re-express <span class="math notranslate nohighlight">\(\pi_i\)</span> <strong>on an unrestricted scale</strong>, the modelling is done in terms of the logit function (the link function in this model). Specifically, <span class="math notranslate nohighlight">\(\pi_i\)</span> (<span class="math notranslate nohighlight">\(i = 1, 2, \dots, n\)</span>) will depend on the values of the <span class="math notranslate nohighlight">\(p\)</span> regressors <span class="math notranslate nohighlight">\(X_{i, 1}, X_{i, 2}, \dots, X_{i, p}\)</span> in the form:</p>
+<div class="math notranslate nohighlight">
+\[
+h(\pi_i) = \mbox{logit}(\pi_i) = \log \bigg( \frac{\pi_i}{1 - \pi_i}\bigg) = \beta_0 + \beta_1 X_{i, 1} + \beta_1 X_{i, 2} + \ldots + \beta_p X_{i, p},
+\]</div>
+<p>or equivalently</p>
+<div class="math notranslate nohighlight">
+\[
+\pi_i = \frac{\exp\big[\mbox{logit}(\pi_i)\big]}{1 + \exp\big[\mbox{logit}(\pi_i)\big]}.
+\]</div>
+<p>Note that the <span class="math notranslate nohighlight">\(\log(\cdot)\)</span> notation in the model above refers to the <strong>natural logarithm</strong>, i.e., <strong>logarithm base <span class="math notranslate nohighlight">\(e\)</span></strong>. The equation above for <span class="math notranslate nohighlight">\(\pi_i\)</span> shows that this Binary Logistic regression model will result in values of the probability of success <span class="math notranslate nohighlight">\(\pi_i\)</span> that are always between 0 and 1.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The response in this GLM is called the log-odds, the logarithm of the odds <span class="math notranslate nohighlight">\(\pi_i/(1 - \pi_i)\)</span>, the ratio of the probability of the event to the probability of the non-event. For instance, if the event is that the tumour is malignant, it denotes how likely the <span class="math notranslate nohighlight">\(i\)</span>th tumour is to be malignant compared to how unlikely it is. The coefficient <span class="math notranslate nohighlight">\(\beta_j\)</span> (<span class="math notranslate nohighlight">\(j = 1, \dots, p\)</span>) denotes how much the log-odds increases or decreases when the corresponding continuous regressor changes by one unit</p>
+</div>
+</section>
+<section id="id1">
+<h3>4.5. Estimation<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<p>Under a general framework with <span class="math notranslate nohighlight">\(p\)</span> regressors, the <strong>regression parameters</strong> <span class="math notranslate nohighlight">\(\beta_0, \beta_1, \dots, \beta_p\)</span> in this model are also unknown. In order to fit the model, we can use the function <code class="docutils literal notranslate"><span class="pre">glm()</span></code> and its argument <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">binomial</span></code> (required to specify the binary nature of the response), which obtains the estimates <span class="math notranslate nohighlight">\(\hat{\beta}_0, \hat{\beta}_1, \dots \hat{\beta}_p\)</span> (note the hat notation).</p>
+<p>The estimates are obtained through <strong>maximum likelihood</strong> where we assume a <strong>joint probability mass function of the <span class="math notranslate nohighlight">\(n\)</span> responses <span class="math notranslate nohighlight">\(Y_i\)</span></strong>. You will put this into practice in the challenging <strong>Exercise 1</strong> of <code class="docutils literal notranslate"><span class="pre">lab1</span></code>.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>For the sake of coding clarity, you could also use <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">binomial(link</span> <span class="pre">=</span> <span class="pre">&quot;logit&quot;)</span></code>. Nevertheless, <code class="docutils literal notranslate"><span class="pre">link</span> <span class="pre">=</span> <span class="pre">&quot;logit&quot;</span></code> is a default in <code class="docutils literal notranslate"><span class="pre">glm()</span></code> for Binary Logistic regression. Thus, <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">binomial</span></code> suffices when using the logit function.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">binary_log_model</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">~</span> <span class="n">mean_radius</span><span class="p">,</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">breast_cancer_binary</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h3>4.6. Inference<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<p>We can determine <strong>whether a regressor is statistically associated with the logarithm of the response’s odds</strong> through <strong>hypothesis testing</strong> for the parameters <span class="math notranslate nohighlight">\(\beta_j\)</span>. We will need information about the estimated regression coefficient <span class="math notranslate nohighlight">\(\hat{\beta}_j\)</span> and its corresponding variability which is reflected in the <strong>standard error</strong> of the estimate, <span class="math notranslate nohighlight">\(\mbox{se}(\hat{\beta}_j)\)</span>.</p>
+<p>To determine the <strong>statistical significance</strong> of <span class="math notranslate nohighlight">\(\hat{\beta}_j\)</span>, you can use the <strong>Wald statistic</strong> <span class="math notranslate nohighlight">\(z_j\)</span></p>
+<div class="math notranslate nohighlight">
+\[
+z_j = \frac{\hat{\beta}_j}{\mbox{se}(\hat{\beta}_j)}
+\]</div>
+<p>to test the hypotheses</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0: \beta_j = 0 \\
+H_a: \beta_j \neq 0.
+\end{gather*}\end{split}\]</div>
+<p><strong>A statistic like <span class="math notranslate nohighlight">\(z_j\)</span> is analogous to the <span class="math notranslate nohighlight">\(t\)</span>-value in OLS regression.</strong> However, in Binary Logistic regression, provided the sample size <span class="math notranslate nohighlight">\(n\)</span> is large enough, <span class="math notranslate nohighlight">\(z_j\)</span> has an <strong>approximately Standard Normal distribution</strong> under <span class="math notranslate nohighlight">\(H_0\)</span> rather than a <span class="math notranslate nohighlight">\(t\)</span>-distribution.</p>
+<p><code class="docutils literal notranslate"><span class="pre">R</span></code> provides the corresponding <strong><span class="math notranslate nohighlight">\(p\)</span>-value</strong> for each <span class="math notranslate nohighlight">\(\beta_j\)</span>. The smaller the <span class="math notranslate nohighlight">\(p\)</span>-value, the stronger the evidence against the null hypothesis <span class="math notranslate nohighlight">\(H_0\)</span>. Hence, a small enough <span class="math notranslate nohighlight">\(p\)</span>-value (less than the significance level <span class="math notranslate nohighlight">\(\alpha\)</span>) indicates that the data provides evidence in favour of <strong>association</strong> (<strong>or causation in the case of an experimental study!</strong>) between the log-dds and the <span class="math notranslate nohighlight">\(j\)</span>th regressor. Furthermore, given a specified level of confidence, we can construct approximate <span class="math notranslate nohighlight">\((1 - \alpha) \times 100\%\)</span> <strong>confidence intervals</strong> (CIs) for the corresponding true value of <span class="math notranslate nohighlight">\(\beta_j\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{\beta}_j \pm z_{\alpha/2}\mbox{se}(\hat{\beta}_j),
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(z_{\alpha/2}\)</span> is the upper <span class="math notranslate nohighlight">\(\alpha/2\)</span> quantile of the <strong>Standard Normal distribution</strong>.</p>
+<p>Now, we can answer the following: <strong>is <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> statistically associated with the logarithm of the odds of <code class="docutils literal notranslate"><span class="pre">target</span></code>?</strong> We can also use the function <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> from the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package along with argument <code class="docutils literal notranslate"><span class="pre">conf.int</span> <span class="pre">=</span> <span class="pre">TRUE</span></code> to get the 95% confidence intervals <strong>by default</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">binary_log_model</span><span class="p">,</span> <span class="n">conf.int</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td>-15.246</td><td>1.325</td><td>-11.510</td><td>0</td><td>-18.034</td><td>-12.826</td></tr>
+	<tr><td>mean_radius</td><td>  1.034</td><td>0.093</td><td> 11.101</td><td>0</td><td>  0.864</td><td>  1.230</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Our sample gives us evidence to reject <span class="math notranslate nohighlight">\(H_0\)</span> (<span class="math notranslate nohighlight">\(p\text{-value} &lt; .001\)</span>). So <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> is statistically associated to the logarithm of the odds of <code class="docutils literal notranslate"><span class="pre">target</span></code>.</p>
+</section>
+<section id="coefficient-interpretation">
+<h3>4.7. Coefficient Interpretation<a class="headerlink" href="#coefficient-interpretation" title="Permalink to this headline">#</a></h3>
+<p><strong>What is the interpretation of the estimate <span class="math notranslate nohighlight">\(\hat{\beta}_1\)</span> for <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> on the response <code class="docutils literal notranslate"><span class="pre">target</span></code>?</strong> We have to transform back our estimated coefficient <span class="math notranslate nohighlight">\(\hat{\beta_1}\)</span> to the original scale of the odds <span class="math notranslate nohighlight">\(\frac{\pi_i}{1 - \pi_i}\)</span>. Function <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> has the handy argument <code class="docutils literal notranslate"><span class="pre">exponentiate</span> <span class="pre">=</span> <span class="pre">TRUE</span></code> which exponentiates the <code class="docutils literal notranslate"><span class="pre">estimate</span></code> column along with the CIs (note the rest of the columns remain untransformed).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">binary_log_model</span><span class="p">,</span> <span class="n">conf.int</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> <span class="n">exponentiate</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td>0.00</td><td>1.32</td><td>-11.51</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+	<tr><td>mean_radius</td><td>2.81</td><td>0.09</td><td> 11.10</td><td>0</td><td>2.37</td><td>3.42</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>The interpretation is: <strong>“for each unit increase in <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code>, the tumour is 2.81 times more likely to be malignant than to be benign.”</strong></p>
+<p>This example does not provide interpretations for <strong>categorical explanatory variables</strong>. As in OLS multiple regression, the model fit will estimate multiple regression coefficients for that categorical explanatory variable, one for each level other than the <strong>baseline level</strong>. The interpretation of each regression coefficient estimated will depend on which category was specified as the baseline category.</p>
+<p>Recall <a class="reference internal" href="#dummy-var"><span class="std std-numref">Table 1</span></a>, which describes dummy variables for a nominal explanatory variable with <span class="math notranslate nohighlight">\(m\)</span> categories, where <strong>Level 1</strong> was specified as the baseline level, so all <span class="math notranslate nohighlight">\(m-1\)</span> dummy variables are zero for that level. The estimated regression coefficient for <strong>Level 2</strong> represents how much the log-odds increases or decreases compared to the baseline category. The same interpretation applies to the regression coefficients for levels <span class="math notranslate nohighlight">\(3, \dots, m\)</span>. If we want to interpret these coefficients on the original scale of the odds <span class="math notranslate nohighlight">\(\frac{\pi_i}{1 - \pi_i}\)</span>, then we exponentiate each one of these estimated coefficients.</p>
+<p>Now, let us fit a second model with two regressors: <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> (<span class="math notranslate nohighlight">\(X_{\texttt{mr}_i}\)</span>) and <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code> (<span class="math notranslate nohighlight">\(X_{\texttt{mt}_i}\)</span>) for the <span class="math notranslate nohighlight">\(i\)</span>th observation:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_i = \mbox{logit}(\pi_i)= \log\left(\frac{\pi_i}{1 - \pi_i}\right) = \beta_0 + \beta_1 X_{\texttt{mr}_i} + \beta_2 X_{\texttt{mt}_i}.
+\]</div>
+<p>Firstly, we select the necessary columns from our dataset <code class="docutils literal notranslate"><span class="pre">breast_cancer</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">breast_cancer_binary_2</span> <span class="o">&lt;-</span> <span class="n">breast_cancer</span> <span class="o">%&gt;%</span>
+  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">mean_radius</span><span class="p">,</span> <span class="n">mean_texture</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="n">breast_cancer_binary_2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 569 × 3</caption>
+<thead>
+	<tr><th scope=col>mean_radius</th><th scope=col>mean_texture</th><th scope=col>target</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>17.99</td><td>10.38</td><td>malignant</td></tr>
+	<tr><td>20.57</td><td>17.77</td><td>malignant</td></tr>
+	<tr><td>19.69</td><td>21.25</td><td>malignant</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>16.60</td><td>28.08</td><td>malignant</td></tr>
+	<tr><td>20.60</td><td>29.33</td><td>malignant</td></tr>
+	<tr><td> 7.76</td><td>24.54</td><td>benign   </td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Then, we fit the corresponding Binary Logistic regression.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">binary_log_model_2</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">~</span> <span class="n">mean_radius</span> <span class="o">+</span> <span class="n">mean_texture</span><span class="p">,</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">breast_cancer_binary_2</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span><span class="p">)</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">binary_log_model_2</span><span class="p">,</span> <span class="n">conf.int</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 3 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept) </td><td>-19.849</td><td>1.774</td><td>-11.189</td><td>0</td><td>-23.592</td><td>-16.615</td></tr>
+	<tr><td>mean_radius </td><td>  1.057</td><td>0.101</td><td> 10.417</td><td>0</td><td>  0.872</td><td>  1.271</td></tr>
+	<tr><td>mean_texture</td><td>  0.218</td><td>0.037</td><td>  5.885</td><td>0</td><td>  0.147</td><td>  0.293</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Note that both regressors (<code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> and <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code>) are statistically significant for the response <code class="docutils literal notranslate"><span class="pre">target</span></code> (<span class="math notranslate nohighlight">\(p\text{-values} &lt; .001\)</span>). Then, we make the corresponding coefficient interpretations:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">binary_log_model_2</span><span class="p">,</span> <span class="n">conf.int</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> <span class="n">exponentiate</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 3 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept) </td><td>0.00</td><td>1.77</td><td>-11.19</td><td>0</td><td>0.00</td><td>0.00</td></tr>
+	<tr><td>mean_radius </td><td>2.88</td><td>0.10</td><td> 10.42</td><td>0</td><td>2.39</td><td>3.57</td></tr>
+	<tr><td>mean_texture</td><td>1.24</td><td>0.04</td><td>  5.89</td><td>0</td><td>1.16</td><td>1.34</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>The interpretation for <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> is: <strong>“for each unit increase in <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code>, the tumour is 2.88 times more likely to be malignant than to be benign while holding <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code> constant.”</strong></p>
+<p>The interpretation for <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code> is: <strong>“for each unit increase in <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code>, the tumour is 1.24 times more likely to be malignant than to be benign while holding <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> constant.”</strong></p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Note that the estimated coefficients for each regressor are standalone. Hence, we have to clarify that each estimate stands while holding the other regressor constant. This same interpretation holds with more than two regressors.</p>
+</div>
+</section>
+<section id="predictions">
+<h3>4.8. Predictions<a class="headerlink" href="#predictions" title="Permalink to this headline">#</a></h3>
+<p>Suppose we want to predict the odds of a tumour being malignant to being benign using our trained <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code>. This tumour has the following values for <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> and <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code>: <span class="math notranslate nohighlight">\(x_{\texttt{mr}} = 16\)</span> and <span class="math notranslate nohighlight">\( x_{\texttt{mt}} = 20\)</span>, respectively.</p>
+<p>We use <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code> for making such prediction as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*} 
+\log \bigg( \frac{\hat{\pi}}{1 - \hat{\pi}}\bigg) = \underbrace{-19.849}_{\hat{\beta}_0} + \underbrace{1.057}_{\hat{\beta}_1}(16) + \underbrace{0.218}_{\hat{\beta}_2}(20) = 1.43 \\
+\frac{\hat{\pi}}{1 - \hat{\pi}} = 4.17.
+\end{gather*}\end{split}\]</div>
+<p>We can use the function <code class="docutils literal notranslate"><span class="pre">predict()</span></code> via the argument <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;link&quot;</span></code> to obtain the predicted logarithm of the odds. Then, we exponentiate it to get the predicted odds.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">exp</span><span class="p">(</span><span class="nf">predict</span><span class="p">(</span><span class="n">binary_log_model_2</span><span class="p">,</span>
+  <span class="nf">tibble</span><span class="p">(</span><span class="n">mean_radius</span> <span class="o">=</span> <span class="m">16</span><span class="p">,</span> <span class="n">mean_texture</span> <span class="o">=</span> <span class="m">20</span><span class="p">),</span>
+  <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;link&quot;</span>
+<span class="p">)),</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><strong>1:</strong> 4.17</div></div>
+</div>
+<p>Hence, a tumour with <span class="math notranslate nohighlight">\(x_{\texttt{mr}} = 16\)</span> and <span class="math notranslate nohighlight">\( x_{\texttt{mt}} = 20\)</span> is predicted to be 4.17 times more likely to be malignant than benign.</p>
+<p><strong>Can We Predict Probabilities For Classification Purposes?</strong></p>
+<p>Using the function <code class="docutils literal notranslate"><span class="pre">predict()</span></code> via the argument <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;response&quot;</span></code> with the object <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code>, we can obtain the estimated probability for a tumour to be malignant with the following values for <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> and <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code>: <span class="math notranslate nohighlight">\(x_{\texttt{mr}} = 16\)</span> and <span class="math notranslate nohighlight">\( x_{\texttt{mt}} = 20\)</span> respectively.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">predict</span><span class="p">(</span><span class="n">binary_log_model_2</span><span class="p">,</span>
+  <span class="nf">tibble</span><span class="p">(</span><span class="n">mean_radius</span> <span class="o">=</span> <span class="m">16</span><span class="p">,</span> <span class="n">mean_texture</span> <span class="o">=</span> <span class="m">20</span><span class="p">),</span>
+  <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;response&quot;</span>
+<span class="p">),</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><strong>1:</strong> 0.81</div></div>
+</div>
+<p>Hence, a tumour with <span class="math notranslate nohighlight">\(x_{\texttt{mr}} = 16\)</span> and <span class="math notranslate nohighlight">\( x_{\texttt{mt}} = 20\)</span> has a predicted probability of 0.81 of beign malignant.</p>
+</section>
+<section id="optional-4-9-model-diagnostics">
+<h3>(Optional) 4.9. Model Diagnostics<a class="headerlink" href="#optional-4-9-model-diagnostics" title="Permalink to this headline">#</a></h3>
+<p><strong>Model diagnostics</strong> in GLMs are not the same ones from OLS regression and <strong>there is still an open research field for them</strong>. We will check two different plots for the Binary Logistic regression model.</p>
+<section id="deviance-residuals">
+<h4>4.9.1. Deviance Residuals<a class="headerlink" href="#deviance-residuals" title="Permalink to this headline">#</a></h4>
+<p>We can obtain more than one class of residual in a Binary Logistic regression. However, we will concentrate on the <strong>deviance residuals</strong>. A deviance residual for the <span class="math notranslate nohighlight">\(i\)</span>th binary observation <span class="math notranslate nohighlight">\(y_i\)</span> is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+d_i=
+\begin{cases}
+\sqrt{-2 \log \hat{\pi}_i} \; \; \; \; \mbox{if $y_i = 1$},\\
+-\sqrt{-2 \log (1 - \hat{\pi}_i}) \; \; \; \; \mbox{if $y_i = 0$}.
+\end{cases}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{\pi}_i\)</span> is the predicted probability of success coming from the model.</p>
+<p>The sum all the <span class="math notranslate nohighlight">\(n\)</span> <span class="math notranslate nohighlight">\(d_i\)</span>s in the model is the deviance <span class="math notranslate nohighlight">\(D_p\)</span> (column <code class="docutils literal notranslate"><span class="pre">deviance</span></code> above via function <code class="docutils literal notranslate"><span class="pre">glance()</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">glance</span><span class="p">(</span><span class="n">binary_log_model_2</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 8</caption>
+<thead>
+	<tr><th scope=col>null.deviance</th><th scope=col>df.null</th><th scope=col>logLik</th><th scope=col>AIC</th><th scope=col>BIC</th><th scope=col>deviance</th><th scope=col>df.residual</th><th scope=col>nobs</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>751.44</td><td>568</td><td>-145.562</td><td>297.123</td><td>310.155</td><td>291.123</td><td>566</td><td>569</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>With a large enough sample size <span class="math notranslate nohighlight">\(n\)</span>, the deviance residuals are approximately normally distributed. Hence, we could use <strong><span class="math notranslate nohighlight">\(Q\)</span>-<span class="math notranslate nohighlight">\(Q\)</span> plots</strong> for both models. To deliver these <span class="math notranslate nohighlight">\(Q\)</span>-<span class="math notranslate nohighlight">\(Q\)</span> plots, we need to extract the deviance residuals from the Binary Logistic regression models. We can do it via the function <code class="docutils literal notranslate"><span class="pre">residuals()</span></code> with the argument <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;deviance&quot;</span></code>. Below you can find the code to extract these residuals from <code class="docutils literal notranslate"><span class="pre">binary_log_model</span></code> and <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">binary_log_model_dev_residuals</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">dev_residuals</span> <span class="o">=</span> <span class="nf">residuals</span><span class="p">(</span><span class="n">binary_log_model</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;deviance&quot;</span><span class="p">))</span>
+<span class="n">binary_log_model_dev_residuals</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 569 × 1</caption>
+<thead>
+	<tr><th></th><th scope=col>dev_residuals</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>0.26282111</td></tr>
+	<tr><th scope=row>2</th><td>0.06983906</td></tr>
+	<tr><th scope=row>3</th><td>0.10995490</td></tr>
+	<tr><th scope=row>⋮</th><td>⋮</td></tr>
+	<tr><th scope=row>567</th><td> 0.52511283</td></tr>
+	<tr><th scope=row>568</th><td> 0.06876592</td></tr>
+	<tr><th scope=row>569</th><td>-0.03815040</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">binary_log_model_2_dev_residuals</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">dev_residuals</span> <span class="o">=</span> <span class="nf">residuals</span><span class="p">(</span><span class="n">binary_log_model_2</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;deviance&quot;</span><span class="p">))</span>
+<span class="n">binary_log_model_2_dev_residuals</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 569 × 1</caption>
+<thead>
+	<tr><th></th><th scope=col>dev_residuals</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>0.65442997</td></tr>
+	<tr><th scope=row>2</th><td>0.07886868</td></tr>
+	<tr><th scope=row>3</th><td>0.08590128</td></tr>
+	<tr><th scope=row>⋮</th><td>⋮</td></tr>
+	<tr><th scope=row>567</th><td> 0.20788406</td></tr>
+	<tr><th scope=row>568</th><td> 0.02201645</td></tr>
+	<tr><th scope=row>569</th><td>-0.06078262</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We can code these plots “by hand” using <code class="docutils literal notranslate"><span class="pre">ggplot2()</span></code>, but we will save up time using package <code class="docutils literal notranslate"><span class="pre">qqplotr</span></code>. The file <code class="docutils literal notranslate"><span class="pre">support_functions.R</span></code> in the repo’s folder <code class="docutils literal notranslate"><span class="pre">scripts</span></code> contains the function <code class="docutils literal notranslate"><span class="pre">qqplot_dev_residuals()</span></code>, which uses <code class="docutils literal notranslate"><span class="pre">qqplotr</span></code>’s tools. This function shows the <span class="math notranslate nohighlight">\(Q\)</span>-<span class="math notranslate nohighlight">\(Q\)</span> plot for the deviance residuals of each fitted model. It needs these residuals in the <code class="docutils literal notranslate"><span class="pre">data</span></code> argument and a proper <code class="docutils literal notranslate"><span class="pre">title</span></code>.</p>
+<p>The advantage of <code class="docutils literal notranslate"><span class="pre">qqplotr</span></code> is that, besides the usual 45° degree line, it allows us to plot 95% (by default) <strong>confidence bands</strong>. Since we cannot expect all points to be on the 45° degree line, we still expect them to be within the confidence bands. <strong>Nonetheless, we have serious non-normality issues on both models for the most extreme observations, as shown below.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">qqplot_dev_residuals</span><span class="p">(</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">binary_log_model_dev_residuals</span><span class="p">,</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="s">&quot;Q-Q Plot for Binary Logistic Model with Mean Radius&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_105_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_105_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">qqplot_dev_residuals</span><span class="p">(</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">binary_log_model_2_dev_residuals</span><span class="p">,</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="s">&quot;Q-Q Plot for Binary Logistic Model with Mean Radius and Mean Texture&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_106_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_106_0.png" />
+</div>
+</div>
+</section>
+<section id="binned-residual-plots">
+<h4>4.9.1. Binned Residual Plots<a class="headerlink" href="#binned-residual-plots" title="Permalink to this headline">#</a></h4>
+<p>A plot of <strong>the deviance residuals <span class="math notranslate nohighlight">\(d_i\)</span> versus fitted values <span class="math notranslate nohighlight">\(\mbox{logit}(\pi_i)\)</span></strong> as the one below might not be too informative. This class of diagnostic plot makes sense for OLS to verify we are fulfilling <strong>the constant variance assumption</strong> on the random component. Still, it is not the case for Binary Logistic regression <strong>since each response is an independent Bernoulli trial with its parameter <span class="math notranslate nohighlight">\(\pi_i\)</span></strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">binary_log_model_2</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="n">cex.lab</span> <span class="o">=</span> <span class="m">1.5</span><span class="p">,</span> <span class="n">cex.axis</span> <span class="o">=</span> <span class="m">1.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_108_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_108_0.png" />
+</div>
+</div>
+<p>Besides deviance residuals, the Binary Logistic regression model has the <span class="math notranslate nohighlight">\(i\)</span>th <strong>raw residual</strong> <span class="math notranslate nohighlight">\(r_i\)</span> as the difference between the binary observed <span class="math notranslate nohighlight">\(y_i\)</span> and the fitted value <span class="math notranslate nohighlight">\(\hat{\pi}_i\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+r_i = y_i - \hat{\pi}_i \in [-1, 1]
+\]</div>
+<p><a class="reference external" href="http://webcat2.library.ubc.ca/vwebv/search?searchArg=Data%20analysis%20using%20regression%20and%20multilevel%2Fhierarchical%20models%20%2F&amp;searchCode=TALL&amp;searchType=1">Gelman and Hill (2007)</a> recommend using <strong>binned residual plots</strong>. These plots are available via the package <code class="docutils literal notranslate"><span class="pre">performance</span></code> and its function <code class="docutils literal notranslate"><span class="pre">binned_residuals()</span></code>. Its argument is the fitted model as in the code below. The output is a data frame used to build the corresponding diagnostic plot.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">diagnostic_bins</span> <span class="o">&lt;-</span> <span class="nf">binned_residuals</span><span class="p">(</span><span class="n">binary_log_model_2</span><span class="p">)</span>
+<span class="n">diagnostic_bins</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A binned_residuals: 24 × 10</caption>
+<thead>
+	<tr><th></th><th scope=col>xbar</th><th scope=col>ybar</th><th scope=col>n</th><th scope=col>x.lo</th><th scope=col>x.hi</th><th scope=col>se</th><th scope=col>ci_range</th><th scope=col>CI_low</th><th scope=col>CI_high</th><th scope=col>group</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>0.0009379625</td><td>-0.0009379625</td><td>23</td><td>7.190053e-05</td><td>0.001845559</td><td>0.0001917538</td><td>9.783537e-05</td><td>-0.001129716</td><td>-0.0007462087</td><td>no</td></tr>
+	<tr><th scope=row>2</th><td>0.0030236387</td><td>-0.0030236387</td><td>24</td><td>1.897157e-03</td><td>0.004319643</td><td>0.0003304141</td><td>1.685817e-04</td><td>-0.003354053</td><td>-0.0026932246</td><td>no</td></tr>
+	<tr><th scope=row>3</th><td>0.0054739696</td><td>-0.0054739696</td><td>24</td><td>4.374413e-03</td><td>0.007189815</td><td>0.0003298181</td><td>1.682777e-04</td><td>-0.005803788</td><td>-0.0051441514</td><td>no</td></tr>
+	<tr><th scope=row>⋮</th><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><th scope=row>22</th><td>0.9953239</td><td>0.0046760770</td><td>24</td><td>0.9918863</td><td>0.9973316</td><td>8.014352e-04</td><td>0.0004089030</td><td>0.0038746418</td><td>0.0054775122</td><td>no</td></tr>
+	<tr><th scope=row>23</th><td>0.9986466</td><td>0.0013533920</td><td>24</td><td>0.9976117</td><td>0.9994714</td><td>2.157605e-04</td><td>0.0001100839</td><td>0.0011376315</td><td>0.0015691525</td><td>no</td></tr>
+	<tr><th scope=row>24</th><td>0.9998101</td><td>0.0001898535</td><td>24</td><td>0.9994960</td><td>0.9999997</td><td>7.154299e-05</td><td>0.0000365022</td><td>0.0001183105</td><td>0.0002613965</td><td>no</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Then, we can obtain the binned residual plot via the function <code class="docutils literal notranslate"><span class="pre">plot()</span></code>. The resulting plot is a <code class="docutils literal notranslate"><span class="pre">ggplot</span></code> object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">diagnostic_bins</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">30</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">plot.subtitle</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">23</span><span class="p">),</span> 
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">27</span><span class="p">),</span>
+    <span class="n">legend.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+    <span class="n">legend.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">)</span>
+  <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_logistic_regression_112_0.png" src="../_images/DSCI_562_lecture_glm_logistic_regression_112_0.png" />
+</div>
+</div>
+<p>The plot above corresponds to <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code>. Function <code class="docutils literal notranslate"><span class="pre">binned_residuals()</span></code> does the following:</p>
+<ul class="simple">
+<li><p><strong>Unless specified</strong>, the <strong>default number of bins</strong> is <span class="math notranslate nohighlight">\(\lceil \sqrt{n} \rceil\)</span> as in the ceiling function: <code class="docutils literal notranslate"><span class="pre">ceiling(sqrt(n))</span></code>. For the dataset <code class="docutils literal notranslate"><span class="pre">breast_cancer</span></code> we have <span class="math notranslate nohighlight">\(n = 569\)</span>, leading to 24 bins (i.e. 24 points in the plot).</p></li>
+<li><p>The <span class="math notranslate nohighlight">\(n\)</span> <strong>fitted values</strong> <span class="math notranslate nohighlight">\(\hat{\pi}_i\)</span> are ordered from smallest to largest.</p></li>
+<li><p>The ordered fitted values <span class="math notranslate nohighlight">\(\hat{\pi}_1 &lt; \hat{\pi}_2 &lt; \dots &lt; \hat{\pi}_n\)</span> are equally split in the <span class="math notranslate nohighlight">\(\lceil \sqrt(n) \rceil\)</span> bins.</p></li>
+<li><p>The respective average fitted value per bin is mapped onto the <span class="math notranslate nohighlight">\(x\)</span>-axis.</p></li>
+<li><p>The corresponding average raw residual <span class="math notranslate nohighlight">\(\bar{r}_j\)</span> for the <span class="math notranslate nohighlight">\(j\)</span>th bin is mapped on the <span class="math notranslate nohighlight">\(y\)</span>-axis. Recall the <span class="math notranslate nohighlight">\(i\)</span>th raw residual is <span class="math notranslate nohighlight">\(r_i = y_i - \hat{\pi}_i\)</span>.</p></li>
+<li><p>The <strong>95% bounds of confidence</strong> are computed as <span class="math notranslate nohighlight">\(\pm 1.96 \times \left( \frac{s_{r_j}}{\sqrt{n_j}} \right)\)</span> <strong>centred at <span class="math notranslate nohighlight">\(0\)</span> on the <span class="math notranslate nohighlight">\(y\)</span>-axis</strong>; where <span class="math notranslate nohighlight">\(s_{r_j}\)</span> is the <strong>sample standard deviation</strong> of the raw residuals in the <span class="math notranslate nohighlight">\(j\)</span>th bin with <span class="math notranslate nohighlight">\(n_j\)</span> observations, and <span class="math notranslate nohighlight">\(1.96\)</span> is the <span class="math notranslate nohighlight">\(97.5th\)</span> percentile of the Standard Normal distribution.</p></li>
+<li><p><strong>One would expect to have <span class="math notranslate nohighlight">\(95\%\)</span> of the points to be within the bounds to have a good model fit.</strong></p></li>
+</ul>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Note this plot also shows the corresponding <strong>95% CIs</strong> (<strong>as vertical lines</strong>) for each <span class="math notranslate nohighlight">\(\bar{r}_j\)</span> as follows:</p>
+<div class="math notranslate nohighlight">
+\[\bar{r}_j \pm 1.96 \times \left( \frac{s_{r_j}}{\sqrt{n_j}} \right).\]</div>
+</div>
+</section>
+</section>
+</section>
+<section id="wrapping-up">
+<h2>5. Wrapping Up<a class="headerlink" href="#wrapping-up" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>OLS regression might not be suitable in many different cases.</p></li>
+<li><p>One possible approach is a response transformation to get rid of range issues.</p></li>
+<li><p>We can also rely on subject-matter expertise in our regression modelling.</p></li>
+<li><p>GLMs are the way to go in regression analysis when the response is not continuous, and we need to perform inference.</p></li>
+<li><p>We started with the most basic GLM: Binary Logistic regression.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            kernelName: "ir",
+            path: "./lecture-notes"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="DSCI_552_lecture-maximum-likelihood-estimation.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">DSCI 552 Lecture: Maximum Likelihood Estimation</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="DSCI_562_lecture_glm_count_regression.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DSCI 552 Lecture 2 - Generalized Linear Models: Count Regression</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By G. Alexi Rodríguez-Arelis<br/>
+  
+      &copy; Copyright 2023.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
