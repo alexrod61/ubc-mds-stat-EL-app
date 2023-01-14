@@ -1,0 +1,1456 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>DSCI 552 Lecture: Maximum Likelihood Estimation &#8212; Sample Jupyter Book</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression" href="DSCI_562_lecture_glm_logistic_regression.html" />
+    <link rel="prev" title="Sample Teaching Materials for the Application to Assistant Professor of Teaching - MDS/STAT" href="../README.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Sample Jupyter Book</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    Sample Teaching Materials for the Application to Assistant Professor of Teaching - MDS/STAT
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Lecture Notes
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   DSCI 552 Lecture: Maximum Likelihood Estimation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="DSCI_562_lecture_glm_logistic_regression.html">
+   DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="DSCI_562_lecture_glm_count_regression.html">
+   DSCI 552 Lecture 2 - Generalized Linear Models: Count Regression
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/alexrod61/ubc-mds-stat-app/master?urlpath=tree/lecture-notes/DSCI_552_lecture-maximum-likelihood-estimation.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/alexrod61/ubc-mds-stat-app"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/alexrod61/ubc-mds-stat-app/issues/new?title=Issue%20on%20page%20%2Flecture-notes/DSCI_552_lecture-maximum-likelihood-estimation.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/lecture-notes/DSCI_552_lecture-maximum-likelihood-estimation.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#today-s-learning-goals">
+   Today’s Learning Goals
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-r-packages">
+   Loading
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     R
+    </span>
+   </code>
+   Packages
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#estimating-population-parameters-in-a-different-way">
+   1. Estimating population parameters in a different way!
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#a-first-example">
+     1.1. A first example!
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#how-can-we-do-this">
+     1.2. How can we do this?
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#what-is-the-definition-of-mle">
+   2. What is the definition of MLE?
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#some-key-ideas">
+     2.1. Some key ideas…
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#but-what-is-the-likelihood-function">
+     2.2. But, what is the likelihood function?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#digression-how-do-we-compute-the-likelihood">
+     2.3. (Digression) How do we compute the likelihood?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#going-back-to-our-sample-n30">
+     2.4. Going back to our
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       sample_n30
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#interlude-the-wonders-of-log-likelihood">
+     2.5. Interlude: The wonders of log-likelihood
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#finding-the-maximum-likelihood-and-log-likelihood-using-a-range-of-lambda-values">
+     2.6. Finding the maximum likelihood and log-likelihood using a range of
+     <span class="math notranslate nohighlight">
+      \(\lambda\)
+     </span>
+     values
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#can-we-apply-mle-analytically">
+   3. Can we apply MLE analytically?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#probability-versus-likelihood-in-continuous-random-variables">
+   4. Probability versus Likelihood in Continuous Random Variables
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#wrapping-up">
+   5. Wrapping up!
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#steps-for-empirical-mle">
+     5.1. Steps for Empirical MLE
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#steps-for-analytical-mle">
+     5.2. Steps for Analytical MLE
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#supplementary-material">
+   6. Supplementary Material
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-use-of-the-optim-function">
+     The use of the
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       optim()
+      </span>
+     </code>
+     function
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#questions-you-might-have">
+   7. Questions you might have…
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>DSCI 552 Lecture: Maximum Likelihood Estimation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#today-s-learning-goals">
+   Today’s Learning Goals
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-r-packages">
+   Loading
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     R
+    </span>
+   </code>
+   Packages
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#estimating-population-parameters-in-a-different-way">
+   1. Estimating population parameters in a different way!
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#a-first-example">
+     1.1. A first example!
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#how-can-we-do-this">
+     1.2. How can we do this?
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#what-is-the-definition-of-mle">
+   2. What is the definition of MLE?
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#some-key-ideas">
+     2.1. Some key ideas…
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#but-what-is-the-likelihood-function">
+     2.2. But, what is the likelihood function?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#digression-how-do-we-compute-the-likelihood">
+     2.3. (Digression) How do we compute the likelihood?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#going-back-to-our-sample-n30">
+     2.4. Going back to our
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       sample_n30
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#interlude-the-wonders-of-log-likelihood">
+     2.5. Interlude: The wonders of log-likelihood
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#finding-the-maximum-likelihood-and-log-likelihood-using-a-range-of-lambda-values">
+     2.6. Finding the maximum likelihood and log-likelihood using a range of
+     <span class="math notranslate nohighlight">
+      \(\lambda\)
+     </span>
+     values
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#can-we-apply-mle-analytically">
+   3. Can we apply MLE analytically?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#probability-versus-likelihood-in-continuous-random-variables">
+   4. Probability versus Likelihood in Continuous Random Variables
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#wrapping-up">
+   5. Wrapping up!
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#steps-for-empirical-mle">
+     5.1. Steps for Empirical MLE
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#steps-for-analytical-mle">
+     5.2. Steps for Analytical MLE
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#supplementary-material">
+   6. Supplementary Material
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-use-of-the-optim-function">
+     The use of the
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       optim()
+      </span>
+     </code>
+     function
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#questions-you-might-have">
+   7. Questions you might have…
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="dsci-552-lecture-maximum-likelihood-estimation">
+<h1>DSCI 552 Lecture: Maximum Likelihood Estimation<a class="headerlink" href="#dsci-552-lecture-maximum-likelihood-estimation" title="Permalink to this headline">#</a></h1>
+<section id="today-s-learning-goals">
+<h2>Today’s Learning Goals<a class="headerlink" href="#today-s-learning-goals" title="Permalink to this headline">#</a></h2>
+<p>By the end of this lecture, you should be able to:</p>
+<ol class="simple">
+<li><p>Explain the concept of maximum likelihood estimation (MLE).</p></li>
+<li><p>Apply MLE for cases with one population parameter.</p></li>
+</ol>
+</section>
+<section id="loading-r-packages">
+<h2>Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages<a class="headerlink" href="#loading-r-packages" title="Permalink to this headline">#</a></h2>
+<p>Let us load the libraries for data wrangling, analysis, and plotting.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">repr.plot.width</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span>
+<span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span> <span class="o">=</span> <span class="m">6</span><span class="p">)</span>
+<span class="nf">source</span><span class="p">(</span><span class="s">&quot;scripts/support_functions.R&quot;</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">gridExtra</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Attaching packages</span> ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.2 ──
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">ggplot2</span> 3.4.0      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">purrr  </span> 0.3.4 
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tibble </span> 3.1.8      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">dplyr  </span> 1.0.10
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tidyr  </span> 1.2.0      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">stringr</span> 1.4.0 
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">readr  </span> 2.1.2      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">forcats</span> 0.5.1 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Conflicts</span> ────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">filter()</span> masks <span class=" -Color -Color-Blue">stats</span>::filter()
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">lag()</span>    masks <span class=" -Color -Color-Blue">stats</span>::lag()
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Attaching package: ‘gridExtra’
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following object is masked from ‘package:dplyr’:
+
+    combine
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="estimating-population-parameters-in-a-different-way">
+<h2>1. Estimating population parameters in a different way!<a class="headerlink" href="#estimating-population-parameters-in-a-different-way" title="Permalink to this headline">#</a></h2>
+<p>Let us go one step further on population parameter estimation. So far, we have dealt with single parameters in our confidence intervals and hypothesis testings.</p>
+<p>Nonetheless, <strong>what happens if we want to estimate more than just a single parameter?</strong> There are many different statistical distributions (<strong>including the normal!</strong>) with more than one parameter.</p>
+<p>We can use MLE for <strong>univariate</strong> or <strong>multivariate</strong> purposes. This method heavily relies on <strong>a random sample of <span class="math notranslate nohighlight">\(n\)</span> observations</strong> coming from the <strong>population of interest</strong>.</p>
+<section id="a-first-example">
+<h3>1.1. A first example!<a class="headerlink" href="#a-first-example" title="Permalink to this headline">#</a></h3>
+<p>Suppose we have an <strong>empirical distribution</strong> of standard deviations of gene expression for different genes. This empirical distribution corresponds to a random sample of standard deviations.</p>
+<p>Moreover, we would like to estimate the parameters from the population this sample is coming from.</p>
+<figure class="align-default" id="mle-motivation">
+<a class="reference internal image-reference" href="../_images/mle_motivation.png"><img alt="../_images/mle_motivation.png" src="../_images/mle_motivation.png" style="height: 750px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Image from <em>Data Analysis for the Life Sciences</em> (Irizarry and Love, 2016).</span><a class="headerlink" href="#mle-motivation" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="how-can-we-do-this">
+<h3>1.2. How can we do this?<a class="headerlink" href="#how-can-we-do-this" title="Permalink to this headline">#</a></h3>
+<p>This illustration gives us some ideas. First, note the same histogram corresponding to the random sample appears in each cell of the grid. Second, the red line represents a given theoretical probability density function (PDF) under specific population parameters.</p>
+<p>Now, we might wonder: <strong>what red line fits the histogram better?</strong></p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The question above is the intuition of MLE!</p>
+</div>
+</section>
+</section>
+<section id="what-is-the-definition-of-mle">
+<h2>2. What is the definition of MLE?<a class="headerlink" href="#what-is-the-definition-of-mle" title="Permalink to this headline">#</a></h2>
+<p>MLE is a method that, given some observed data and some assumed family of probability distributions, seeks to find values of the parameters that would make the observed data <strong>most likely to have occurred</strong>.</p>
+<div class="admonition-alternatively admonition">
+<p class="admonition-title">Alternatively:</p>
+<p>MLE is a method that, given some observed data and some assumed family of probability distributions, seeks to find the distribution that would make the observed data most likely to have occurred. The parameters specify this distribution.</p>
+</div>
+<p>These are the <strong>EMPIRICAL</strong> steps we follow for our previous example using MLE:</p>
+<ol class="simple">
+<li><p>Firstly, we choose a family of theoretical distributions that we believe our observed sample distribution comes from. Here, we chose an <a class="reference external" href="https://en.wikipedia.org/wiki/F-distribution"><span class="math notranslate nohighlight">\(F\)</span>-distribution</a>.</p></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>How we choose the family of distributions for our statistical modelling will be covered in more detail in <strong>DSCI 562</strong>.</p>
+</div>
+<ol class="simple">
+<li><p>Next, we vary the parameter(s) for that <strong>parametric family of theoretical distributions</strong> to find a specific, single distribution that best fits the observed data.</p></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The <span class="math notranslate nohighlight">\(F\)</span>-distribution has two parameters (<span class="math notranslate nohighlight">\(d\)</span> which controls the location and <span class="math notranslate nohighlight">\(s_0\)</span> which controls the scale). We started our discussion of MLE by just varying one of these parameters, <span class="math notranslate nohighlight">\(s_0\)</span>, while holding <span class="math notranslate nohighlight">\(d\)</span> fixed at 10.</p>
+</div>
+<p>From the histograms above, can we do it just “by eye”? Not precisely. So how can we do this? MLE is one way. Let us now explore how.</p>
+<section id="some-key-ideas">
+<h3>2.1. Some key ideas…<a class="headerlink" href="#some-key-ideas" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>We aim to estimate the parameters of a theoretical distribution (e.g., <span class="math notranslate nohighlight">\(\mu\)</span> and/or <span class="math notranslate nohighlight">\(\sigma^2\)</span> in the case of a Normal distribution).</p></li>
+<li><p>Therefore, we need to make a distributional assumption for our data - at the family level (choose a distribution: Normal, Exponential, Poisson, Binomial, etc.).</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>One crucial element to consider is the nature of our variable of interest (is it continuous or discrete?).</p>
+</div>
+<ul class="simple">
+<li><p>Then, we play around with the parameters for that family of distributions to find the one that would be <strong>most likely</strong> given our data, and we choose the corresponding parametric <strong>estimates</strong>.</p></li>
+<li><p>To obtain these estimates, we use the <strong>likelihood function</strong>.</p></li>
+</ul>
+</section>
+<section id="but-what-is-the-likelihood-function">
+<h3>2.2. But, what is the likelihood function?<a class="headerlink" href="#but-what-is-the-likelihood-function" title="Permalink to this headline">#</a></h3>
+<p>Let us set another example. Suppose we draw a random sample of <span class="math notranslate nohighlight">\(n = 30\)</span> observations from a <strong>continuous population</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_n30</span> <span class="o">&lt;-</span> <span class="nf">tibble</span><span class="p">(</span><span class="n">values</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span>
+  <span class="m">24.9458614574341</span><span class="p">,</span> <span class="m">7.23174970992907</span><span class="p">,</span> <span class="m">4.16136401519179</span><span class="p">,</span> <span class="m">5.60304128237143</span><span class="p">,</span>
+  <span class="m">5.37929488345981</span><span class="p">,</span> <span class="m">1.40547217217847</span><span class="p">,</span> <span class="m">7.0701988485075</span><span class="p">,</span> <span class="m">2.84055356831115</span><span class="p">,</span>
+  <span class="m">0.894746121019125</span><span class="p">,</span> <span class="m">2.9016381111011</span><span class="p">,</span> <span class="m">3.19011222943664</span><span class="p">,</span> <span class="m">11.0930137682099</span><span class="p">,</span>
+  <span class="m">3.49700326472521</span><span class="p">,</span> <span class="m">46.2914818498428</span><span class="p">,</span> <span class="m">2.00653892990149</span><span class="p">,</span> <span class="m">2.87363994969391</span><span class="p">,</span>
+  <span class="m">11.4050390862658</span><span class="p">,</span> <span class="m">11.6616687767937</span><span class="p">,</span> <span class="m">12.8855835341646</span><span class="p">,</span> <span class="m">3.88483320176601</span><span class="p">,</span>
+  <span class="m">0.406148910522461</span><span class="p">,</span> <span class="m">25.7642258988289</span><span class="p">,</span> <span class="m">8.4743227359272</span><span class="p">,</span> <span class="m">4.17410666868091</span><span class="p">,</span>
+  <span class="m">1.84968510270119</span><span class="p">,</span> <span class="m">2.15972620035141</span><span class="p">,</span> <span class="m">10.5289600339151</span><span class="p">,</span> <span class="m">6.44162824716339</span><span class="p">,</span>
+  <span class="m">10.6035323139645</span><span class="p">,</span> <span class="m">66.6861112673485</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us plot the empirical (sample) distribution as a histogram but using a density scale, as a first step:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">hist_sample_n30</span> <span class="o">&lt;-</span> <span class="n">sample_n30</span> <span class="o">%&gt;%</span>
+    <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+    <span class="nf">geom_histogram</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">..density..</span><span class="p">),</span> <span class="n">fill</span> <span class="o">=</span> <span class="s">&quot;grey&quot;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;black&quot;</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="m">50</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">theme</span><span class="p">(</span>
+      <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">24</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+      <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">18</span><span class="p">),</span>
+      <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">24</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">+</span>
+    <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Histogram of a Continuous Random Sample of n = 30&quot;</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">scale_colour_discrete</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="nf">expression</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Rate (&quot;</span><span class="p">,</span> <span class="n">lambda</span><span class="p">,</span> <span class="s">&quot;)&quot;</span><span class="p">)))</span> <span class="o">+</span>
+    <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&quot;Observed Value&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Density&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">..density..</span></code> transforms the <span class="math notranslate nohighlight">\(y\)</span>-values on the histogram from counts to a density.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">hist_sample_n30</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message:
+“The dot-dot notation (`..density..`) was deprecated in ggplot2 3.4.0.
+<span class=" -Color -Color-Cyan">ℹ</span> Please use `after_stat(density)` instead.”
+</pre></div>
+</div>
+<img alt="../_images/DSCI_552_lecture-maximum-likelihood-estimation_14_1.png" src="../_images/DSCI_552_lecture-maximum-likelihood-estimation_14_1.png" />
+</div>
+</div>
+<p>We will assume it is an <strong>Exponential population</strong> whose unknown parameter is <span class="math notranslate nohighlight">\(\lambda\)</span> (<strong>note we have nonnegative continuous observations!</strong>). Therefore, <strong>we aim to estimate <span class="math notranslate nohighlight">\(\lambda\)</span> via the observed values in this random sample.</strong> Moreover, given our distributional assumption, each observation is <span class="math notranslate nohighlight">\(y_i\)</span> (<span class="math notranslate nohighlight">\(i = 1, \dots, 30\)</span>) with the following PDF:</p>
+<div class="math notranslate nohighlight">
+\[
+f_{Y_i}(y_i \mid \lambda) = \lambda \exp(-\lambda y_i).
+\]</div>
+<p>How can we obtain an estimate for <span class="math notranslate nohighlight">\(\lambda\)</span>? MLE is one possible approach to overcome this matter:</p>
+<ul class="simple">
+<li><p>First, we choose a theoretical distribution that we believe our sample’s empirical distribution is coming. The equation above, <span class="math notranslate nohighlight">\(f_{Y_i}(y_i \mid \lambda)\)</span>, will be extremely useful. Here we chose a distribution such as the Exponential given our right-skewed <code class="docutils literal notranslate"><span class="pre">hist_sample_n30</span></code> (the empirical distribution).</p></li>
+<li><p>Since it is a random sample, we assume all the <span class="math notranslate nohighlight">\(n\)</span> observations are <em>iid</em>. This assumption leads to the following <strong>joint PDF</strong>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+f_{Y_1, \dots, Y_n}(y_1, \dots, y_n \mid \lambda) = \prod_{i = 1}^n \lambda \exp(-\lambda y_i).
+\]</div>
+<p>Now, you might wonder: <em>where is the likelihood function?</em> The likelihood function is a function of the parameters of a given/chosen theoretical distribution.</p>
+<p>It is equivalent (<strong>mathematically!</strong>) to the joint PDF (or probability mass function, PMF, if the random variables are discrete as we will see in <code class="docutils literal notranslate"><span class="pre">lab4</span></code>). <strong>However, we have to change our perspective: we do not know the population parameter, but the sample’s observed values</strong>.</p>
+<p>From our previous example with the joint PDF <span class="math notranslate nohighlight">\(f_{Y_1, \dots, Y_n}(y_1, \dots, y_n \mid \lambda)\)</span>, this implicates:</p>
+<div class="math notranslate nohighlight">
+\[\mathscr{l}(\lambda \mid y_1, \dots, y_n) = f_{Y_1, \dots, Y_n}(y_1, \dots, y_n \mid \lambda) = \prod_{i = 1}^n \lambda \exp(-\lambda y_i).\]</div>
+</section>
+<section id="digression-how-do-we-compute-the-likelihood">
+<h3>2.3. (Digression) How do we compute the likelihood?<a class="headerlink" href="#digression-how-do-we-compute-the-likelihood" title="Permalink to this headline">#</a></h3>
+<p><strong>A smaller and different sample of <span class="math notranslate nohighlight">\(n = 3\)</span></strong></p>
+<p>Let us suppose that we only have three observations (note the lowercases!): <span class="math notranslate nohighlight">\(y_1 = 0.8\)</span>, <span class="math notranslate nohighlight">\(y_2 = 2.1\)</span>, and <span class="math notranslate nohighlight">\(y_3 = 2.4\)</span>. Moreover, we will assume they come from <strong>the family of Exponential distributions</strong>. The likelihood function would be the joint PDF of this sample:</p>
+<div class="math notranslate nohighlight">
+\[\mathscr{l}(\lambda \mid y_1, y_2, y_3) = \lambda \exp(-\lambda y_1) \times \lambda \exp(-\lambda y_2) \times \lambda \exp(-\lambda y_3)\]</div>
+<div class="math notranslate nohighlight">
+\[\mathscr{l}(\lambda \mid y_1, y_2, y_3) = \lambda \exp[-\lambda (0.8)] \times \lambda \exp[-\lambda (2.1)] \times \lambda \exp[-\lambda (2.4)].\]</div>
+<p>Look at the left-hand side of the likelihood equation! <strong>The likelihood function is NOT a PDF</strong>, even though it mathematically looks the same as the joint PDF of your sample. <strong>The likelihood function is a function of the parameter <span class="math notranslate nohighlight">\(\lambda\)</span> and not <span class="math notranslate nohighlight">\(y_1\)</span>, <span class="math notranslate nohighlight">\(y_2\)</span>, and <span class="math notranslate nohighlight">\(y_3\)</span>.</strong></p>
+<p><strong>Calculating the likelihood value</strong></p>
+<p>Since we want to calculate the likelihood of a specific theoretical distribution given the data we have observed:</p>
+<div class="math notranslate nohighlight">
+\[\mathscr{l}(\text{distributional parameter}\, | \,\text{observed data});\]</div>
+<p>to calculate the likelihood for a specific distribution for that family, we choose a specific value for <span class="math notranslate nohighlight">\(\lambda\)</span>. Then, we calculate the likelihood. For instance, what is the likelihood of an exponential distribution where <span class="math notranslate nohighlight">\(\lambda = 2\)</span> given the data we observed?</p>
+<div class="math notranslate nohighlight">
+\[\mathscr{l}(\lambda = 2 \mid y_1, y_2, y_3) = 2 \exp[-2 (0.8)] \times 2 \exp[2 (2.1)] \times 2 \exp[2 (2.4)].\]</div>
+<p>Let us use <code class="docutils literal notranslate"><span class="pre">R</span></code>!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="m">2</span> <span class="o">*</span> <span class="nf">exp</span><span class="p">(</span><span class="m">-2</span> <span class="o">*</span> <span class="m">0.8</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="m">2</span> <span class="o">*</span> <span class="nf">exp</span><span class="p">(</span><span class="m">-2</span> <span class="o">*</span> <span class="m">2.1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="m">2</span> <span class="o">*</span> <span class="nf">exp</span><span class="p">(</span><span class="m">-2</span> <span class="o">*</span> <span class="m">2.4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.000199328077852026</div></div>
+</div>
+<p>Or more easily (via <code class="docutils literal notranslate"><span class="pre">dexp()</span></code>):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">0.8</span><span class="p">,</span> <span class="m">2.1</span><span class="p">,</span> <span class="m">2.4</span><span class="p">)</span>
+<span class="nf">prod</span><span class="p">(</span><span class="nf">dexp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="m">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.000199328077852026</div></div>
+</div>
+<p>We can use another two <span class="math notranslate nohighlight">\(\lambda\)</span> values to compute the corresponding likelihood given the data we observed. Let us use <span class="math notranslate nohighlight">\(\lambda = 0.5\)</span> and <span class="math notranslate nohighlight">\(0.05\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">prod</span><span class="p">(</span><span class="nf">dexp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="m">0.5</span><span class="p">))</span>
+<span class="nf">prod</span><span class="p">(</span><span class="nf">dexp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="m">0.05</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.0088314016325537</div><div class="output text_html">9.5900743746982e-05</div></div>
+</div>
+<p><strong>Removing the curtain!</strong></p>
+<p>The observed data was actually drawn from an exponential distribution with <span class="math notranslate nohighlight">\(\lambda = 0.5\)</span>. Thus, it is not a surprise that the likelihood is higher for this value of <span class="math notranslate nohighlight">\(\lambda\)</span> than the other two we tried.</p>
+</section>
+<section id="going-back-to-our-sample-n30">
+<h3>2.4. Going back to our <code class="docutils literal notranslate"><span class="pre">sample_n30</span></code><a class="headerlink" href="#going-back-to-our-sample-n30" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_n30</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 30 × 1</caption>
+<thead>
+	<tr><th scope=col>values</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>24.945861</td></tr>
+	<tr><td> 7.231750</td></tr>
+	<tr><td> 4.161364</td></tr>
+	<tr><td>⋮</td></tr>
+	<tr><td> 6.441628</td></tr>
+	<tr><td>10.603532</td></tr>
+	<tr><td>66.686111</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We will choose a few different exponential distributions (by varying <span class="math notranslate nohighlight">\(\lambda\)</span>), calculate the likelihood for those distributions given the data we observed, and then overlay those distributions on the empirical distributions (i.e., histograms) to see how they map together.</p>
+<p>Let us try the following <span class="math notranslate nohighlight">\(\lambda\)</span> values: <span class="math notranslate nohighlight">\(0.05\)</span>, <span class="math notranslate nohighlight">\(0.125\)</span> and <span class="math notranslate nohighlight">\(0.5\)</span>.</p>
+<p>We will calculate the <strong>theoretical <code class="docutils literal notranslate"><span class="pre">density</span></code></strong> of an Exponential distribution with <span class="math notranslate nohighlight">\(\lambda = 0.05\)</span> for a <strong>sequence of quantiles</strong> (<code class="docutils literal notranslate"><span class="pre">x</span></code>) from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">70</span></code> by <code class="docutils literal notranslate"><span class="pre">0.05</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">likelihood_0.05</span> <span class="o">&lt;-</span> <span class="nf">prod</span><span class="p">(</span><span class="nf">dexp</span><span class="p">(</span><span class="n">sample_n30</span><span class="o">$</span><span class="n">values</span><span class="p">,</span> <span class="m">0.05</span><span class="p">))</span>
+<span class="n">likelihood_0.05</span>
+
+<span class="n">density_0.05</span> <span class="o">&lt;-</span> <span class="nf">tibble</span><span class="p">(</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">70</span><span class="p">,</span> <span class="m">0.05</span><span class="p">),</span>
+  <span class="n">density</span> <span class="o">=</span> <span class="nf">dexp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="m">0.05</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">density_0.05</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">1.88020716349799e-46</div><div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1401 × 2</caption>
+<thead>
+	<tr><th scope=col>x</th><th scope=col>density</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>0.00</td><td>0.05000000</td></tr>
+	<tr><td>0.05</td><td>0.04987516</td></tr>
+	<tr><td>0.10</td><td>0.04975062</td></tr>
+	<tr><td>⋮</td><td>⋮</td></tr>
+	<tr><td>69.90</td><td>0.001517437</td></tr>
+	<tr><td>69.95</td><td>0.001513649</td></tr>
+	<tr><td>70.00</td><td>0.001509869</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lambda_0.05</span> <span class="o">&lt;-</span> <span class="n">hist_sample_n30</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">density_0.05</span><span class="p">,</span>
+    <span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">density</span><span class="p">),</span> <span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">annotate</span><span class="p">(</span><span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="m">45</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="m">0.1</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="nf">paste0</span><span class="p">(</span><span class="s">&quot;l = &quot;</span><span class="p">,</span> <span class="n">likelihood_0.05</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="m">10</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="nf">expression</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="n">lambda</span><span class="p">,</span> <span class="s">&quot;= 0.05&quot;</span><span class="p">)))</span>
+
+<span class="n">plot_lambda_0.05</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_552_lecture-maximum-likelihood-estimation_28_0.png" src="../_images/DSCI_552_lecture-maximum-likelihood-estimation_28_0.png" />
+</div>
+</div>
+<p>Now for <span class="math notranslate nohighlight">\(\lambda\)</span> values of <span class="math notranslate nohighlight">\(0.125\)</span> and <span class="math notranslate nohighlight">\(0.5\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">likelihood_0.125</span> <span class="o">&lt;-</span> <span class="nf">prod</span><span class="p">(</span><span class="nf">dexp</span><span class="p">(</span><span class="n">sample_n30</span><span class="o">$</span><span class="n">values</span><span class="p">,</span> <span class="m">0.125</span><span class="p">))</span>
+<span class="n">likelihood_0.125</span>
+
+<span class="n">density_0.125</span> <span class="o">&lt;-</span> <span class="nf">tibble</span><span class="p">(</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">70</span><span class="p">,</span> <span class="m">0.125</span><span class="p">),</span>
+  <span class="n">density</span> <span class="o">=</span> <span class="nf">dexp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="m">0.125</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">1.47932747228137e-44</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">likelihood_0.5</span> <span class="o">&lt;-</span> <span class="nf">prod</span><span class="p">(</span><span class="nf">dexp</span><span class="p">(</span><span class="n">sample_n30</span><span class="o">$</span><span class="n">values</span><span class="p">,</span> <span class="m">0.5</span><span class="p">))</span>
+<span class="n">likelihood_0.5</span>
+
+<span class="n">density_0.5</span> <span class="o">&lt;-</span> <span class="nf">tibble</span><span class="p">(</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">70</span><span class="p">,</span> <span class="m">0.5</span><span class="p">),</span>
+  <span class="n">density</span> <span class="o">=</span> <span class="nf">dexp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">1.04750440797452e-76</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lambda_0.125</span> <span class="o">&lt;-</span> <span class="n">hist_sample_n30</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">density_0.125</span><span class="p">,</span>
+    <span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">density</span><span class="p">),</span> <span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">annotate</span><span class="p">(</span><span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="m">45</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="m">0.1</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="nf">paste0</span><span class="p">(</span><span class="s">&quot;l = &quot;</span><span class="p">,</span> <span class="n">likelihood_0.125</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="m">10</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="nf">expression</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="n">lambda</span><span class="p">,</span> <span class="s">&quot;= 0.125&quot;</span><span class="p">)))</span> <span class="o">+</span> <span class="nf">ylim</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0.5</span><span class="p">))</span>
+
+<span class="n">plot_lambda_0.5</span> <span class="o">&lt;-</span> <span class="n">hist_sample_n30</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">density_0.5</span><span class="p">,</span>
+    <span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">density</span><span class="p">),</span> <span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">annotate</span><span class="p">(</span><span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="m">45</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="m">0.1</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="nf">paste0</span><span class="p">(</span><span class="s">&quot;l = &quot;</span><span class="p">,</span> <span class="n">likelihood_0.5</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="m">10</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="nf">expression</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="n">lambda</span><span class="p">,</span> <span class="s">&quot;= 0.5&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.width</span> <span class="o">=</span> <span class="m">16</span><span class="p">,</span> <span class="n">repr.plot.height</span> <span class="o">=</span> <span class="m">14</span><span class="p">)</span>
+<span class="nf">grid.arrange</span><span class="p">(</span><span class="n">plot_lambda_0.05</span> <span class="o">+</span> <span class="nf">ylim</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)),</span> <span class="n">plot_lambda_0.125</span><span class="p">,</span> <span class="n">plot_lambda_0.5</span><span class="p">,</span> <span class="n">nrow</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_552_lecture-maximum-likelihood-estimation_33_0.png" src="../_images/DSCI_552_lecture-maximum-likelihood-estimation_33_0.png" />
+</div>
+</div>
+<p><strong>We can see that the LARGEST likelihood value maps onto the Exponential distribution that best fits the observed data: the one with <span class="math notranslate nohighlight">\(\lambda = 0.125\)</span> (note the <span class="math notranslate nohighlight">\(y\)</span>-axis scale is the same for the three histograms)</strong>. However, to find the maximum likelihood value (and hence best <span class="math notranslate nohighlight">\(\lambda\)</span> to specify our specific Exponential distribution) using this approach would take forever and/or be impossible.</p>
+<p>Let us instead calculate and visualize the likelihoods for a wide range of <span class="math notranslate nohighlight">\(\lambda\)</span>’s and choose the specific distribution with the maximum likelihood.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Even though we will automatically try a wide range of <span class="math notranslate nohighlight">\(\lambda\)</span> values to obtain the one that yields the maximum likelihood, <strong>this is not an analytical solution but empirical</strong>.</p>
+</div>
+</section>
+<section id="interlude-the-wonders-of-log-likelihood">
+<h3>2.5. Interlude: The wonders of log-likelihood<a class="headerlink" href="#interlude-the-wonders-of-log-likelihood" title="Permalink to this headline">#</a></h3>
+<p>Let us re-check the three previous likelihood values coming from <code class="docutils literal notranslate"><span class="pre">sample_n30</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">likelihood_0.05</span>
+<span class="n">likelihood_0.125</span>
+<span class="n">likelihood_0.5</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">1.88020716349799e-46</div><div class="output text_html">1.47932747228137e-44</div><div class="output text_html">1.04750440797452e-76</div></div>
+</div>
+<p>Likelihood values are super small! Hence, we could make a logarithmic transformation (i.e., a monotonic transformation) on the base <span class="math notranslate nohighlight">\(e\)</span> for the likelihood function: <strong>the log-likelihood function</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">likelihood_0.05</span><span class="p">),</span> <span class="m">4</span><span class="p">)</span>
+<span class="nf">round</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">likelihood_0.125</span><span class="p">),</span> <span class="m">4</span><span class="p">)</span>
+<span class="nf">round</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">likelihood_0.5</span><span class="p">),</span> <span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">-105.2875</div><div class="output text_html">-100.9222</div><div class="output text_html">-174.9501</div></div>
+</div>
+<p>The use of the log-likelihood function is common in MLE.</p>
+<p>As previously stated, we would not know the real value for <span class="math notranslate nohighlight">\(\lambda\)</span>. The empirical use above, to estimate the value for <span class="math notranslate nohighlight">\(\lambda\)</span>, shows us that <span class="math notranslate nohighlight">\(\lambda = 0.125\)</span> provides the <em>maximum</em> value (i.e., the less negative value) for the log-likelihood function <strong>from these three possible options</strong>. This <span class="math notranslate nohighlight">\(\lambda = 0.125\)</span> is the value under which our random sample is more likely (under the assumption of an Exponential distribution).</p>
+</section>
+<section id="finding-the-maximum-likelihood-and-log-likelihood-using-a-range-of-lambda-values">
+<h3>2.6. Finding the maximum likelihood and log-likelihood using a range of <span class="math notranslate nohighlight">\(\lambda\)</span> values<a class="headerlink" href="#finding-the-maximum-likelihood-and-log-likelihood-using-a-range-of-lambda-values" title="Permalink to this headline">#</a></h3>
+<p>Let us calculate the likelihood and log-likelihood values for a range of <span class="math notranslate nohighlight">\(\lambda\)</span> for our <code class="docutils literal notranslate"><span class="pre">hist_sample_n30</span></code> and then plot these.</p>
+<p>What range? We will talk more about deciding this in a bit, but for now, we will try <span class="math notranslate nohighlight">\(0.01\)</span> to <span class="math notranslate nohighlight">\(0.2\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">exp_values</span> <span class="o">&lt;-</span> <span class="nf">tibble</span><span class="p">(</span>
+  <span class="n">possible_lambdas</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.01</span><span class="p">,</span> <span class="m">0.2</span><span class="p">,</span> <span class="m">0.001</span><span class="p">),</span>
+  <span class="n">likelihood</span> <span class="o">=</span> <span class="nf">map_dbl</span><span class="p">(</span><span class="n">possible_lambdas</span><span class="p">,</span> <span class="o">~</span> <span class="nf">prod</span><span class="p">(</span><span class="nf">dexp</span><span class="p">(</span><span class="n">sample_n30</span><span class="o">$</span><span class="n">values</span><span class="p">,</span> <span class="n">.</span><span class="p">))),</span>
+  <span class="n">log_likelihood</span> <span class="o">=</span> <span class="nf">map_dbl</span><span class="p">(</span><span class="n">possible_lambdas</span><span class="p">,</span> <span class="o">~</span> <span class="nf">log</span><span class="p">(</span><span class="nf">prod</span><span class="p">(</span><span class="nf">dexp</span><span class="p">(</span><span class="n">sample_n30</span><span class="o">$</span><span class="n">values</span><span class="p">,</span> <span class="n">.</span><span class="p">))))</span>
+<span class="p">)</span>
+<span class="n">exp_values</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 191 × 3</caption>
+<thead>
+	<tr><th scope=col>possible_lambdas</th><th scope=col>likelihood</th><th scope=col>log_likelihood</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>0.010</td><td>4.581642e-62</td><td>-141.2382</td></tr>
+	<tr><td>0.011</td><td>5.873592e-61</td><td>-138.6872</td></tr>
+	<tr><td>0.012</td><td>5.870333e-60</td><td>-136.3852</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>0.198</td><td>2.444408e-48</td><td>-109.6303</td></tr>
+	<tr><td>0.199</td><td>2.088875e-48</td><td>-109.7875</td></tr>
+	<tr><td>0.200</td><td>1.783701e-48</td><td>-109.9454</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Plot the possible <span class="math notranslate nohighlight">\(\lambda\)</span>’s against the likelihood of observing them given our data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">repr.plot.width</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">exp_like_plot</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">exp_values</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">possible_lambdas</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">likelihood</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">26</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">20</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">16</span><span class="p">)</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Likelihood Values&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="nf">expression</span><span class="p">(</span><span class="n">lambda</span><span class="p">),</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Likelihood&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_552_lecture-maximum-likelihood-estimation_44_0.png" src="../_images/DSCI_552_lecture-maximum-likelihood-estimation_44_0.png" />
+</div>
+</div>
+<p>How about the log-likelihood values?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">exp_log_like_plot</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">exp_values</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">possible_lambdas</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">log_likelihood</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">26</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">20</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">26</span><span class="p">)</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Likelihood Values&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="nf">expression</span><span class="p">(</span><span class="n">lambda</span><span class="p">),</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Log-likelihood&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_552_lecture-maximum-likelihood-estimation_46_0.png" src="../_images/DSCI_552_lecture-maximum-likelihood-estimation_46_0.png" />
+</div>
+</div>
+<p>What is the maximum? Reading off the graph is a bit difficult, so we will grab the maximum:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">empirical_MLE</span> <span class="o">&lt;-</span> <span class="n">exp_values</span> <span class="o">%&gt;%</span>
+  <span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">likelihood</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">slice</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+<span class="n">empirical_MLE</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 3</caption>
+<thead>
+	<tr><th scope=col>possible_lambdas</th><th scope=col>likelihood</th><th scope=col>log_likelihood</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>0.097</td><td>4.121515e-44</td><td>-99.89752</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The precision of the maximum likelihood estimate we can come up with, <strong>using this empirical method</strong>, depends on the increments by which we vary <span class="math notranslate nohighlight">\(\lambda\)</span>.</p>
+</div>
+</section>
+</section>
+<section id="can-we-apply-mle-analytically">
+<h2>3. Can we apply MLE analytically?<a class="headerlink" href="#can-we-apply-mle-analytically" title="Permalink to this headline">#</a></h2>
+<p><strong>Yes, we can!</strong></p>
+<p>And it will involve multivariate calculus since we have an optimization problem.</p>
+<p><strong>Let us do it with <span class="math notranslate nohighlight">\(\lambda\)</span> in the exponential distribution!</strong></p>
+<ol class="simple">
+<li><p>We will generalize our derivation by assuming a random sample of <span class="math notranslate nohighlight">\(n\)</span> observations (they are independent and identically distributed). Recall that the <span class="math notranslate nohighlight">\(i\)</span>th observation (<span class="math notranslate nohighlight">\(i = 1, \dots, n\)</span>) has the following PDF:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+f_{Y_i}(y_i \mid \lambda) = \lambda \exp(-\lambda y_i).
+\]</div>
+<ol class="simple">
+<li><p>Since the <span class="math notranslate nohighlight">\(n\)</span> observations are assumed independent, the joint PDF is as folllows:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+f_{Y_1, \dots, Y_n}(y_1, \dots, y_n \mid \lambda) = \prod_{i = 1}^n \lambda \exp(-\lambda y_i).
+\]</div>
+<ol class="simple">
+<li><p>The joint likelihood function is mathematically equivalent to the joint PDF. Thus, along with some algebraic rearrangements, we have:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\mathscr{l}(\lambda \mid y_1, \dots , y_{n}) = \prod_{i = 1}^{n} \lambda \exp(-\lambda y_i) = \lambda^n \exp \bigg( -\lambda \sum_{i = 1}^n y_i \bigg).
+\]</div>
+<ol class="simple">
+<li><p>Now, we apply some logarithmic properties to obtain the log-likelihood function:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\log \mathscr{l}(\lambda \mid y_1, \dots , y_{n}) = n \log \lambda - \lambda \sum_{i = 1}^n y_i.
+\]</div>
+<ol class="simple">
+<li><p>We take the first partial derivative, with respect to <span class="math notranslate nohighlight">\(\lambda\)</span>, of the the joint log-likelihood function:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial}{\partial \lambda} \log \mathscr{l}(\lambda \mid y_1, \dots , y_{n}) = \frac{n}{\lambda} - \sum_{i = 1}^n y_i.
+\]</div>
+<ol class="simple">
+<li><p>Then, we set this derivative equal to zero and solve for <span class="math notranslate nohighlight">\(\lambda\)</span>:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\frac{n}{\lambda} - \sum_{i = 1}^n y_i = 0\]</div>
+<div class="math notranslate nohighlight">
+\[\hat{\lambda} = \frac{1}{\bar{Y}}.\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Since we are obtaining the maximum likelihood <strong>estimator</strong>, the notation in <span class="math notranslate nohighlight">\(\hat{\lambda}\)</span> on the right-hand side changes to uppercases (random variables).</p>
+</div>
+<ol class="simple">
+<li><p>Is <span class="math notranslate nohighlight">\(\hat{\lambda}\)</span> a maximum? We can use the second derivative criterion:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial^2}{\partial \lambda} \log \mathscr{l}(\lambda \mid y_1, \dots , y_{n}) = -\frac{n}{\lambda^2} &lt; 0.
+\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>These seven steps also apply to other distributional parameters. For instance, <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> in the normal distribution, or <span class="math notranslate nohighlight">\(\lambda\)</span> in the Poisson distribution.</p>
+</div>
+<p><strong>Therefore…</strong></p>
+<p>Let us convince ourselves of this by overlaying <span class="math notranslate nohighlight">\(\hat{\lambda}\)</span> using our observed <code class="docutils literal notranslate"><span class="pre">sample_n30</span></code> on our plots (the vertical red line indicates the analytical MLE <span class="math notranslate nohighlight">\(\hat{\lambda}\)</span>):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">analytical_MLE</span> <span class="o">&lt;-</span> <span class="m">1</span> <span class="o">/</span> <span class="n">sample_n30</span> <span class="o">%&gt;%</span>
+  <span class="nf">pull</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mean</span><span class="p">()</span>
+<span class="nf">round</span><span class="p">(</span><span class="n">analytical_MLE</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.0973</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">exp_like_plot</span> <span class="o">+</span>
+  <span class="nf">geom_vline</span><span class="p">(</span><span class="n">xintercept</span> <span class="o">=</span> <span class="n">analytical_MLE</span><span class="p">,</span> <span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">)</span>
+
+<span class="n">exp_log_like_plot</span> <span class="o">+</span>
+  <span class="nf">geom_vline</span><span class="p">(</span><span class="n">xintercept</span> <span class="o">=</span> <span class="n">analytical_MLE</span><span class="p">,</span> <span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_552_lecture-maximum-likelihood-estimation_55_0.png" src="../_images/DSCI_552_lecture-maximum-likelihood-estimation_55_0.png" />
+<img alt="../_images/DSCI_552_lecture-maximum-likelihood-estimation_55_1.png" src="../_images/DSCI_552_lecture-maximum-likelihood-estimation_55_1.png" />
+</div>
+</div>
+<p><strong>What if we compare this analytical result versus the empirical one?</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">empirical_MLE</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 3</caption>
+<thead>
+	<tr><th scope=col>possible_lambdas</th><th scope=col>likelihood</th><th scope=col>log_likelihood</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>0.097</td><td>4.121515e-44</td><td>-99.89752</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="n">analytical_MLE</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.0973</div></div>
+</div>
+<p><strong>Bam! It is the maximum!</strong></p>
+</section>
+<section id="probability-versus-likelihood-in-continuous-random-variables">
+<h2>4. Probability versus Likelihood in Continuous Random Variables<a class="headerlink" href="#probability-versus-likelihood-in-continuous-random-variables" title="Permalink to this headline">#</a></h2>
+<p>Let us suppose we have a Standard Normal random variable <span class="math notranslate nohighlight">\(X\)</span>, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[
+X \sim \mathcal{N}(\mu = 0, \sigma^2 = 1).
+\]</div>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">suppressWarnings</span><span class="p">(</span><span class="nf">suppressMessages</span><span class="p">(</span><span class="nf">print</span><span class="p">(</span><span class="nf">prob_vs_likelihood</span><span class="p">())))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_552_lecture-maximum-likelihood-estimation_61_0.png" src="../_images/DSCI_552_lecture-maximum-likelihood-estimation_61_0.png" />
+</div>
+</div>
+<p>The plot shows <span class="math notranslate nohighlight">\(f_X(x \mid \mu, \sigma^2)\)</span> on the vertical axis versus the corresponding quantiles
+on the horizontal axis. We could establish the difference between <strong>probability</strong> and <strong>likelihood</strong>, in a continuous random variable, as follows:</p>
+<ul class="simple">
+<li><p>A <strong>probability</strong> is indicated as in the shaded blue area, e.g., <span class="math notranslate nohighlight">\(P(X &gt; 1.28) = 0.1\)</span>. This is the area under the density curve.</p></li>
+<li><p>A <strong>likelihood</strong> is indicated in the horizontal dashed red line, e.g., <span class="math notranslate nohighlight">\(f_X(x = 1.28 \mid \mu, \sigma^2) = 0.18\)</span>. It is the PDF value on the <span class="math notranslate nohighlight">\(y\)</span>-axis for a given fixed observed <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+</ul>
+</section>
+<section id="wrapping-up">
+<h2>5. Wrapping up!<a class="headerlink" href="#wrapping-up" title="Permalink to this headline">#</a></h2>
+<p>MLE allows us to make inference on population parameters via the observed values of a random sample. This is a classical theory-based method where one needs to make strong distributional assumptions on the data. Moreover, the respective estimators are usually well-behaved (asymptotically speaking). We can even obtain confidence intervals for them.</p>
+<p>It is essential to explore the foundations of this estimation approach since we use it in fields like regression or survival analysis. For instance, generalized linear models (GLMs) or parametric survival regression.</p>
+<p>If we want to estimate assuming a distribution that has more than one parameter (e.g., <span class="math notranslate nohighlight">\(F\)</span>-distribution), things get a bit more complicated:</p>
+<ul class="simple">
+<li><p>Mathematically, solving this matter involves complex partial derivatives <strong>without closed solution</strong>.</p></li>
+<li><p>Numerical optimization in <code class="docutils literal notranslate"><span class="pre">R</span></code> is possible using the <code class="docutils literal notranslate"><span class="pre">optim()</span></code> function.</p></li>
+</ul>
+<p>Finally, we need to stress that we saw two MLE paths: the <strong>empirical</strong> and <strong>analytical</strong>.</p>
+<section id="steps-for-empirical-mle">
+<h3>5.1. Steps for Empirical MLE<a class="headerlink" href="#steps-for-empirical-mle" title="Permalink to this headline">#</a></h3>
+<p><strong>Step 1: Choose the right distribution for the <span class="math notranslate nohighlight">\(i\)</span>th (<span class="math notranslate nohighlight">\(i = 1 , \dots, n\)</span>) PDF or PMF</strong></p>
+<ul class="simple">
+<li><p>Using information you know about your sample of size <span class="math notranslate nohighlight">\(n\)</span>, choose a family of distributions.</p></li>
+<li><p>Identify the corresponding PDF (for continuous data) or PMF (for discrete data).</p></li>
+</ul>
+<p><strong>Step 2: Obtain the joint or PDF or PMF</strong></p>
+<p>Once we have the <span class="math notranslate nohighlight">\(i\)</span>th PDF or PMF, build the joint function.</p>
+<p><strong>Step 3: Obtain the joint likelihood function</strong></p>
+<p>Recall this function is mathematically equivalent to the joint PDF or PMF.</p>
+<p><strong>Step 4:  Obtain the joint log-likelihood function</strong></p>
+<p>Use the rules of logarithms on the joint likelihood function.</p>
+<p><strong>Step 5: Vary the parameters for that family of distribution and calculate the likelihood or log-likelihood</strong></p>
+<ul class="simple">
+<li><p>Use information about the data to help choose the range of values to vary the parameter over.</p></li>
+<li><p>Given your observed sample and the likelihood or log-likelihood functions, vary the parameter’s value all over that range and compute their corresponding values.</p></li>
+</ul>
+<p><strong>Step 6: Choose the parameter value that gives you the maximum likelihood or log-likelihood</strong></p>
+<p>This value will be the maximum likelihood estimate under which your observed data is most likely.</p>
+</section>
+<section id="steps-for-analytical-mle">
+<h3>5.2. Steps for Analytical MLE<a class="headerlink" href="#steps-for-analytical-mle" title="Permalink to this headline">#</a></h3>
+<p><strong>Steps 1, 2, 3, and 4 are the same.</strong></p>
+<p><strong>Step 5: Obtain the partial derivative with respect to the parameter of interest</strong></p>
+<p>You have to use the log-likelihood function since its form makes derivation easier.</p>
+<p><strong>Step 6: Set the partial derivative equal to zero and solve for the parameter of interest</strong></p>
+<p>We are doing this because it is an optimization problem.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>In cases of no analytical solution in this step, we need a numerical optimization method.</p>
+</div>
+<p><strong>Step 7: Check you have a maximum</strong></p>
+<p>You can do it using the second partial derivative criterion with respect to the same parameter of interest.</p>
+</section>
+</section>
+<section id="supplementary-material">
+<h2>6. Supplementary Material<a class="headerlink" href="#supplementary-material" title="Permalink to this headline">#</a></h2>
+<section id="the-use-of-the-optim-function">
+<h3>The use of the <code class="docutils literal notranslate"><span class="pre">optim()</span></code> function<a class="headerlink" href="#the-use-of-the-optim-function" title="Permalink to this headline">#</a></h3>
+<p>Let us use <code class="docutils literal notranslate"><span class="pre">R</span></code>’s <code class="docutils literal notranslate"><span class="pre">optimize()</span></code>, to obtain <span class="math notranslate nohighlight">\(\hat{\lambda}\)</span> with <code class="docutils literal notranslate"><span class="pre">sample_n30</span></code>. This function uses numerical optimization and finds the point where the slope is <code class="docutils literal notranslate"><span class="pre">0</span></code> (maximum).</p>
+<p><code class="docutils literal notranslate"><span class="pre">optimize()</span></code> needs at least these 3 things:</p>
+<ul class="simple">
+<li><p>The log-likelihood function (that references your data)</p></li>
+<li><p>A range of values to vary the parameter over (here <code class="docutils literal notranslate"><span class="pre">0.01</span></code> to <code class="docutils literal notranslate"><span class="pre">0.2</span></code>).</p></li>
+<li><p>Whether to return the minimum or the maximum of the function.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">LL</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="nf">log</span><span class="p">(</span><span class="nf">prod</span><span class="p">(</span><span class="nf">dexp</span><span class="p">(</span><span class="n">sample_n30</span><span class="o">$</span><span class="n">values</span><span class="p">,</span> <span class="n">l</span><span class="p">)))</span>
+<span class="nf">optimize</span><span class="p">(</span><span class="n">LL</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">0.01</span><span class="p">,</span> <span class="m">0.2</span><span class="p">),</span> <span class="n">maximum</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><dl>
+	<dt>$maximum</dt>
+		<dd>0.0972847815533806</dd>
+	<dt>$objective</dt>
+		<dd>-99.8973770181319</dd>
+</dl>
+</div></div>
+</div>
+</section>
+</section>
+<section id="questions-you-might-have">
+<h2>7. Questions you might have…<a class="headerlink" href="#questions-you-might-have" title="Permalink to this headline">#</a></h2>
+<ol class="simple">
+<li><p>Previously, when we estimated things like mean, standard deviation, or proportion of successes, we only calculated these values from the sample using a simple formula. So why are we using more complicated math now to arrive at essentially the same thing?</p></li>
+</ol>
+<blockquote>
+<div><p>MLE provides you with a great way to <strong>FIND</strong> estimators, which are usually well-behaved (asymptotically speaking!). Finding good estimators is a difficult task. The sample mean is a trivial case with a very intuitive answer. However, sometimes you are trying to estimate something much more complex. For example <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> from a linear regression model: <span class="math notranslate nohighlight">\(Y = \beta_0 + \beta_1 X_1 + \varepsilon\)</span>. How would you estimate these parameters when <span class="math notranslate nohighlight">\(\varepsilon \sim \mathcal{N}(0, \sigma^2)\)</span>? MLE can help with that! It is an alternative to least squares estimation (to be seen in <strong>DSCI 561</strong>).  In more complex regression frameworks, such as generalized linear models (GLMs), MLE is the parameter estimation method.</p>
+</div></blockquote>
+<ol class="simple">
+<li><p>OK, we are using a different estimation technique - what about that plausible range for an estimate? For example, if I use MLE to estimate a mean and a standard deviation, how do I calculate a plausible range (i.e., confidence intervals for this estimate)?</p></li>
+</ol>
+<blockquote>
+<div><p>We can come up with the sampling distribution like we do for any given estimator: through asymptotics or bootstrap.</p>
+</div></blockquote>
+<ol class="simple">
+<li><p>When we talked about estimation in general, we said you could estimate any “thing/object.” Primarily we have been working with point estimates, but it could be a function (e.g., empirical distribution function or empirical cumulative distribution function) or other things (a classifier, for example). Are we “limited” to estimating distributions and/or distributional parameters of probability distributions when using MLE?</p></li>
+</ol>
+<blockquote>
+<div><p>The MLE is “limited” to estimating <em>parameters</em>, specifically. But we can then use those estimates to compute other things (and one can prove that those computations are also the MLE, if we were to reparameterize in terms of that quantity). Same with a classifier - first get the MLE of a parameter (like in logistic regression), then do classification. You will see this in the upcoming Machine Learning courses.</p>
+</div></blockquote>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            kernelName: "ir",
+            path: "./lecture-notes"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../README.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Sample Teaching Materials for the Application to Assistant Professor of Teaching - MDS/STAT</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="DSCI_562_lecture_glm_logistic_regression.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By G. Alexi Rodríguez-Arelis<br/>
+  
+      &copy; Copyright 2023.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,2092 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>DSCI 552 Lecture 2 - Generalized Linear Models: Count Regression &#8212; Sample Jupyter Book</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression" href="DSCI_562_lecture_glm_logistic_regression.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Sample Jupyter Book</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    Sample Teaching Materials for the Application to Assistant Professor of Teaching - MDS/STAT
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Lecture Notes
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="DSCI_552_lecture-maximum-likelihood-estimation.html">
+   DSCI 552 Lecture: Maximum Likelihood Estimation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="DSCI_562_lecture_glm_logistic_regression.html">
+   DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   DSCI 552 Lecture 2 - Generalized Linear Models: Count Regression
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/alexrod61/ubc-mds-stat-app/master?urlpath=tree/lecture-notes/DSCI_562_lecture_glm_count_regression.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/alexrod61/ubc-mds-stat-app"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/alexrod61/ubc-mds-stat-app/issues/new?title=Issue%20on%20page%20%2Flecture-notes/DSCI_562_lecture_glm_count_regression.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/lecture-notes/DSCI_562_lecture_glm_count_regression.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#today-s-learning-goals">
+   Today’s Learning Goals
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-r-packages-and-scripts">
+   Loading
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     R
+    </span>
+   </code>
+   Packages and Scripts
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#likelihood-based-model-selection">
+   1. Likelihood-based Model Selection
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-breast-cancer-dataset">
+     1.1. The Breast Cancer Dataset
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#analysis-of-deviance">
+     1.2. Analysis of Deviance
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#akaike-information-criterion-aic">
+     1.3. Akaike Information Criterion (AIC)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#bayesian-information-criterion-bic">
+     1.4. Bayesian Information Criterion (BIC)
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#poisson-regression">
+   2. Poisson Regression
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-crabs-dataset">
+     2.1. The Crabs Dataset
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exploratory-data-analysis">
+     2.2. Exploratory Data Analysis
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#general-modelling-framework">
+     2.3. General Modelling Framework
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#estimation">
+     2.4. Estimation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#inference">
+     2.5. Inference
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#coefficient-interpretation">
+     2.6. Coefficient Interpretation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#predictions">
+     2.7. Predictions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#model-selection">
+     2.8. Model Selection
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#goodness-of-fit-test">
+       2.8.1. Goodness of Fit Test
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#analysis-of-deviance-for-nested-models">
+       2.8.2. Analysis of Deviance for Nested Models
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#aic-and-bic">
+       2.8.3. AIC and BIC
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#overdispersion">
+   3. Overdispersion
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#quasi-poisson-regression">
+   4. Quasi-Poisson Regression
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#negative-binomial-regression">
+   5. Negative Binomial Regression
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reparametrization">
+     5.1. Reparametrization
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     5.2. General Modelling Framework
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     5.3. Estimation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#coefficient-interpretation-prediction-goodness-of-fit-and-model-selection">
+     5.4. Coefficient Interpretation, Prediction, Goodness of Fit, and Model Selection
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#wrapping-up">
+   6. Wrapping Up
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>DSCI 552 Lecture 2 - Generalized Linear Models: Count Regression</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#today-s-learning-goals">
+   Today’s Learning Goals
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-r-packages-and-scripts">
+   Loading
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     R
+    </span>
+   </code>
+   Packages and Scripts
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#likelihood-based-model-selection">
+   1. Likelihood-based Model Selection
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-breast-cancer-dataset">
+     1.1. The Breast Cancer Dataset
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#analysis-of-deviance">
+     1.2. Analysis of Deviance
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#akaike-information-criterion-aic">
+     1.3. Akaike Information Criterion (AIC)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#bayesian-information-criterion-bic">
+     1.4. Bayesian Information Criterion (BIC)
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#poisson-regression">
+   2. Poisson Regression
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-crabs-dataset">
+     2.1. The Crabs Dataset
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exploratory-data-analysis">
+     2.2. Exploratory Data Analysis
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#general-modelling-framework">
+     2.3. General Modelling Framework
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#estimation">
+     2.4. Estimation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#inference">
+     2.5. Inference
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#coefficient-interpretation">
+     2.6. Coefficient Interpretation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#predictions">
+     2.7. Predictions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#model-selection">
+     2.8. Model Selection
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#goodness-of-fit-test">
+       2.8.1. Goodness of Fit Test
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#analysis-of-deviance-for-nested-models">
+       2.8.2. Analysis of Deviance for Nested Models
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#aic-and-bic">
+       2.8.3. AIC and BIC
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#overdispersion">
+   3. Overdispersion
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#quasi-poisson-regression">
+   4. Quasi-Poisson Regression
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#negative-binomial-regression">
+   5. Negative Binomial Regression
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reparametrization">
+     5.1. Reparametrization
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     5.2. General Modelling Framework
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     5.3. Estimation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#coefficient-interpretation-prediction-goodness-of-fit-and-model-selection">
+     5.4. Coefficient Interpretation, Prediction, Goodness of Fit, and Model Selection
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#wrapping-up">
+   6. Wrapping Up
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="dsci-552-lecture-2-generalized-linear-models-count-regression">
+<h1>DSCI 552 Lecture 2 - Generalized Linear Models: Count Regression<a class="headerlink" href="#dsci-552-lecture-2-generalized-linear-models-count-regression" title="Permalink to this headline">#</a></h1>
+<section id="today-s-learning-goals">
+<h2>Today’s Learning Goals<a class="headerlink" href="#today-s-learning-goals" title="Permalink to this headline">#</a></h2>
+<p>By the end of this lecture, you should be able to:</p>
+<ul class="simple">
+<li><p>Perform likelihood-based model selection through analysis of deviance, Akaike Information Criterion, and Bayesian Information Criterion.</p></li>
+<li><p>Build up another three fundamental generalized linear models (GLMs): Poisson, Quasi-Poisson, and Negative Binomial.</p></li>
+<li><p>Use count regression for prediction.</p></li>
+</ul>
+</section>
+<section id="loading-r-packages-and-scripts">
+<h2>Loading <code class="docutils literal notranslate"><span class="pre">R</span></code> Packages and Scripts<a class="headerlink" href="#loading-r-packages-and-scripts" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.matrix.max.rows</span> <span class="o">=</span> <span class="m">6</span><span class="p">)</span>
+<span class="nf">source</span><span class="p">(</span><span class="s">&quot;scripts/support_functions.R&quot;</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">broom</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">glmbb</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">AER</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Attaching packages</span> ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.2 ──
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">ggplot2</span> 3.4.0      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">purrr  </span> 0.3.4 
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tibble </span> 3.1.8      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">dplyr  </span> 1.0.10
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tidyr  </span> 1.2.0      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">stringr</span> 1.4.0 
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">readr  </span> 2.1.2      <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">forcats</span> 0.5.1 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Conflicts</span> ────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">filter()</span> masks <span class=" -Color -Color-Blue">stats</span>::filter()
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">lag()</span>    masks <span class=" -Color -Color-Blue">stats</span>::lag()
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: car
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: carData
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Attaching package: ‘car’
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following object is masked from ‘package:dplyr’:
+
+    recode
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following object is masked from ‘package:purrr’:
+
+    some
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: lmtest
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: zoo
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Attaching package: ‘zoo’
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: sandwich
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: survival
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="likelihood-based-model-selection">
+<h2>1. Likelihood-based Model Selection<a class="headerlink" href="#likelihood-based-model-selection" title="Permalink to this headline">#</a></h2>
+<p>In <strong>DSCI 561</strong>, you learned about <strong>variable selection</strong> in Ordinary Least-Squares (OLS) via specific metrics such as the  Akaike information criterion (AIC) and Bayesian information criterion (BIC). These metrics are also helpful tools to perform <strong>model selection</strong> in GLMs. Additionally, though we already discussed this fact for the Binary Logistic regression model, it is essential to highlight that <strong>many</strong> GLMs are estimated via maximum likelihood.</p>
+<p>Having said all this, you will learn today that metrics such as AIC and BIC are likelihood-based. Hence, the concept of maximum likelihood estimation (MLE) will come into play again for model selection <strong>in many GLMs (even OLS models!)</strong>. Firstly, let us explore model selection for Binary Logistic regression via the dataset from <a class="reference external" href="https://pages.github.ubc.ca/MDS-2022-23/DSCI_562_regr-2_students/notes/lecture1_glm_logistic_regression.html"><code class="docutils literal notranslate"><span class="pre">lecture1</span></code></a>.</p>
+<section id="the-breast-cancer-dataset">
+<h3>1.1. The Breast Cancer Dataset<a class="headerlink" href="#the-breast-cancer-dataset" title="Permalink to this headline">#</a></h3>
+<p>The data frame <code class="docutils literal notranslate"><span class="pre">breast_cancer</span></code> is the Wisconsin Diagnostic Breast Cancer dataset (<a class="reference external" href="http://ubc.summon.serialssolutions.com/2.0.0/link/0/eLvHCXMwlV1Nb9QwEB2xPSA4tHQLohRKDoDgsDSJndiRKlApVBx74PNk2bGDKui2jbf8Ff4uM46tbpZKFZdIO55NvNLLeLx-8waAla_z2UpMEAZXtlZKzllZGSk7WTBdtDa3ts6N61aoOnUqjSGWZaAJhkN9zJfML7dHCi-yfnt-MaPmUXTIGjtpTGAi2cDr-rKkvFsPbQwYBpyafxsvQMTDbPEOVxE5yQSH8iZKHH2iKv4TrsMadLQBKk03kU9WagPHAo___7vuwXpMT7ODAU-bcMvNp3A7seOnsJG6QGQxKEzh7pKk4RQ2o91nL6Oi9ast-LN_qvufb94RAX6xvxc-ZIPtkFDXj23vB_rfiR-b9dxmx_3ZdUO_T_TYgFtsfIXHtuOBinaK84wD9-Hz0YdPhx9nsSPEDPeBJWmp6pJ3VS1tzlvR8Ua6WljWlm3RaMkMs52R1jmJWGu4a6wwtugaaauGtQWaH8Da_GzuHkJWVlpwbgpthKOz3aZsmeRWC9mJxnG7DS8STNT5IPyhaMOEO0xF_WkUZ4qrSuTomEB0k-MzgpiK3UXx4un_F_9DX3qvDjCPw2yPMbxfcCPwLXrd6lgngdMmqa5lx6cJqyoiNTzQLz3xeRq4YWZbAYxXXgGJ27CT8K5iZPOqJEFAUnl8dP2XduDOUPVPjObHsLboL92TIGmxCxPx9TteMcDshnf0L2aRR50">Mangasarian et al., 1995</a>). It has a <strong>binary</strong> response <code class="docutils literal notranslate"><span class="pre">target</span></code>: whether the tumour is <code class="docutils literal notranslate"><span class="pre">benign</span></code> or <code class="docutils literal notranslate"><span class="pre">malignant</span></code>.</p>
+<p>Recall this dataset contains  569 observations from a digitized image of a fine needle aspirate (FNA) of a breast mass. The dataset details 30 real-valued characteristics (i.e., continuous regressors) plus the binary response and <code class="docutils literal notranslate"><span class="pre">ID</span></code> number. We will start working with the response <code class="docutils literal notranslate"><span class="pre">target</span></code> and the regressors <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> and <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">breast_cancer</span> <span class="o">&lt;-</span> <span class="nf">suppressWarnings</span><span class="p">(</span><span class="nf">suppressMessages</span><span class="p">(</span><span class="nf">read_csv</span><span class="p">(</span><span class="s">&quot;datasets/breast_cancer.csv&quot;</span><span class="p">)))</span>
+
+<span class="n">breast_cancer</span> <span class="o">&lt;-</span> <span class="n">breast_cancer</span> <span class="o">%&gt;%</span>
+  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">mean_radius</span><span class="p">,</span> <span class="n">mean_texture</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="n">breast_cancer</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 569 × 3</caption>
+<thead>
+	<tr><th scope=col>mean_radius</th><th scope=col>mean_texture</th><th scope=col>target</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>17.99</td><td>10.38</td><td>malignant</td></tr>
+	<tr><td>20.57</td><td>17.77</td><td>malignant</td></tr>
+	<tr><td>19.69</td><td>21.25</td><td>malignant</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>16.60</td><td>28.08</td><td>malignant</td></tr>
+	<tr><td>20.60</td><td>29.33</td><td>malignant</td></tr>
+	<tr><td> 7.76</td><td>24.54</td><td>benign   </td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Mathematically, we to set the binary response <span class="math notranslate nohighlight">\(Y_i\)</span>  as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+Y_i =
+\begin{cases}
+1 \; \; \; \; \mbox{if the $i$th tumour is malignant},\\
+0 \; \; \; \; 	\mbox{otherwise.}
+\end{cases}
+\end{split}\]</div>
+<p>The “1” category is referred as <strong>success</strong>. Note each <span class="math notranslate nohighlight">\(Y_i\)</span> is a <strong>Bernoulli</strong> trial whose <strong>probability of success</strong> is <span class="math notranslate nohighlight">\(\pi_i\)</span>, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[Y_i \sim \text{Bernoulli}(\pi_i).\]</div>
+<p>Unlike <a class="reference external" href="https://pages.github.ubc.ca/MDS-2022-23/DSCI_562_regr-2_students/notes/lecture1_glm_logistic_regression.html#using-ordinary-least-squares-to-model-probabilities"><code class="docutils literal notranslate"><span class="pre">lecture1</span></code></a>, we will not transform the levels in <code class="docutils literal notranslate"><span class="pre">target</span></code> as <code class="docutils literal notranslate"><span class="pre">1</span></code> for <code class="docutils literal notranslate"><span class="pre">malignant</span></code> and <code class="docutils literal notranslate"><span class="pre">0</span></code> for <code class="docutils literal notranslate"><span class="pre">benign</span></code>. The <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function can work around the original level names <strong>if we set up <code class="docutils literal notranslate"><span class="pre">target</span></code> as factor-type and the failure as the baseline</strong>.</p>
+<p>Recall function <code class="docutils literal notranslate"><span class="pre">levels()</span></code> will tell us the baseline level, which is the one on the left-hand side. According to our previous mathematical setup for <span class="math notranslate nohighlight">\(Y_i\)</span>, level <code class="docutils literal notranslate"><span class="pre">benign</span></code> is the failure.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">breast_cancer</span> <span class="o">&lt;-</span> <span class="n">breast_cancer</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
+
+<span class="nf">levels</span><span class="p">(</span><span class="n">breast_cancer</span><span class="o">$</span><span class="n">target</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'benign'</li><li>'malignant'</li></ol>
+</div></div>
+</div>
+<p><strong>To perform model selection</strong>, let us estimate two Binary Logistic regression models with <code class="docutils literal notranslate"><span class="pre">target</span></code> as a response. <strong>Model 1</strong> will only have the continuous <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> (<span class="math notranslate nohighlight">\(X_{\texttt{mr}_i}\)</span>) as a regressor, whereas <strong>Model 2</strong> will have <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> and <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code> (<span class="math notranslate nohighlight">\(X_{\texttt{mr}_i}\)</span> and <span class="math notranslate nohighlight">\(X_{\texttt{mt}_i}\)</span>) as regressors.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\textbf{Model 1:} &amp; \\ 
+&amp; h(\pi_i) = \log\left(\frac{\pi_i}{1 - \pi_i}\right) = \beta_0 + \beta_1 X_{\texttt{mr}_i}. \\
+\textbf{Model 2:} &amp; \\ 
+&amp; h(\pi_i) = \log\left(\frac{\pi_i}{1 - \pi_i}\right) = \beta_0 + \beta_1 X_{\texttt{mr}_i} + \beta_2 X_{\texttt{mt}_i}. \\
+\end{align*}\end{split}\]</div>
+<p>Then, via <code class="docutils literal notranslate"><span class="pre">glm()</span></code> and <code class="docutils literal notranslate"><span class="pre">breast_cancer</span></code>, we obtain our regression estimates.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">binary_log_model_1</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">~</span> <span class="n">mean_radius</span><span class="p">,</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">breast_cancer</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span>
+<span class="p">)</span>
+
+<span class="n">binary_log_model_2</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">~</span> <span class="n">mean_radius</span> <span class="o">+</span> <span class="n">mean_texture</span><span class="p">,</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">breast_cancer</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since we are digging into model selection, let us keep in mind the below <strong>main statistical inquiry</strong>.</p>
+<div class="admonition-main-statistical-inquiry admonition">
+<p class="admonition-title">Main statistical inquiry</p>
+<p>We want to determine which Binary Logistic regression model fits the data better: <strong>Model 1</strong> or <strong>Model 2</strong>.</p>
+</div>
+</section>
+<section id="analysis-of-deviance">
+<h3>1.2. Analysis of Deviance<a class="headerlink" href="#analysis-of-deviance" title="Permalink to this headline">#</a></h3>
+<p>The <strong>deviance</strong> (<span class="math notranslate nohighlight">\(D_p\)</span>) criterion can be used to compare a given model with <span class="math notranslate nohighlight">\(p\)</span> regressors with that of a <strong>baseline model</strong>. The usual baseline model is the <strong>saturated</strong> or <strong>full model</strong>, which perfectly fits the data because it allows a distinct probability of success <span class="math notranslate nohighlight">\(\pi_i\)</span> for the <span class="math notranslate nohighlight">\(i\)</span>th observation in the dataset (<span class="math notranslate nohighlight">\(i = 1, \dots, n\)</span>), <strong>unrelated to the <span class="math notranslate nohighlight">\(p\)</span> regressors</strong>.</p>
+<p>The <strong>maximized likelihood</strong> of this full model is denoted as <span class="math notranslate nohighlight">\(\hat{\mathscr{l}}_f\)</span>. Now, let <span class="math notranslate nohighlight">\(\hat{\mathscr{l}}_p\)</span> be the value of the maximized likelihood computed from our dataset of <span class="math notranslate nohighlight">\(n\)</span> observation with <span class="math notranslate nohighlight">\(p\)</span> regressors.</p>
+<p>We can compare the fits provided by these two models by the deviance <span class="math notranslate nohighlight">\(D_p\)</span> given by</p>
+<div class="math notranslate nohighlight">
+\[
+D_p = -2 \log \Bigg(\frac{\hat{\mathscr{l}}_p}{\hat{\mathscr{l}}_f} \Bigg) =  -2 \left[ \log \left( \hat{\mathscr{l}}_p \right) - \log \left( \hat{\mathscr{l}}_f \right) \right].
+\]</div>
+<p>Note that <span class="math notranslate nohighlight">\(D_p\)</span> expresses <strong>how much our given model deviates from the full model on log-likelihood scale</strong>. This metric is interpreted as follows:</p>
+<ul class="simple">
+<li><p><strong>Large values</strong> of <span class="math notranslate nohighlight">\(D_p\)</span> arise when <span class="math notranslate nohighlight">\(\hat{\mathscr{l}}_p\)</span> is small relative to <span class="math notranslate nohighlight">\(\hat{\mathscr{l}}_f\)</span>, indicating that <strong>our given model fits the data poorly compared to the baseline model</strong>.</p></li>
+<li><p><strong>Small values</strong> of <span class="math notranslate nohighlight">\(D_p\)</span> arise when <span class="math notranslate nohighlight">\(\hat{\mathscr{l}}_p\)</span> is similar to <span class="math notranslate nohighlight">\(\hat{\mathscr{l}}_f\)</span>, indicating that <strong>our given model provides a good fit to the data compared to the baseline model</strong>.</p></li>
+</ul>
+<p><strong>For the specific case of the Binary Logistic regression</strong>, it can be shown that <span class="math notranslate nohighlight">\(D_p\)</span> is represented by the following equation:</p>
+<div class="math notranslate nohighlight" id="equation-deviance-bin-log">
+<span class="eqno">(4)<a class="headerlink" href="#equation-deviance-bin-log" title="Permalink to this equation">#</a></span>\[\begin{equation}
+D_p = -2 \sum_{i = 1}^n \big[\hat{\pi}_i \text{logit}(\hat{\pi}_i) + \log (1 - \hat{\pi}_i) \big],
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{\pi}_i\)</span> is the estimated probability of success for the <span class="math notranslate nohighlight">\(i\)</span>th observation for <span class="math notranslate nohighlight">\(i = 1, \dots, n\)</span> in our random sample <strong>with our fitted model of <span class="math notranslate nohighlight">\(p\)</span> regressors</strong>. Equation <a class="reference internal" href="#equation-deviance-bin-log">(4)</a> above comes from <strong>maximum likelihood estimation</strong>.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The mathematical proof for the previous equation can be checked in <a class="reference external" href="https://www-taylorfrancis-com.ezproxy.library.ubc.ca/chapters/models-binary-binomial-data-david-collett/10.1201/b16654-6?context=ubx&amp;refId=fa9f451b-9961-4928-99be-036c68551115">Collett (2003)</a> in Chapter 3 (Section 3.8.2). <strong>This is optional material</strong>.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p><strong>For the specific case of Binary Logistic regression</strong>, deviance <span class="math notranslate nohighlight">\(D_p\)</span> cannot be used as a standalone metric of <strong>goodness of fit</strong> because of <strong>data sparsity</strong>; i.e., each <span class="math notranslate nohighlight">\(i\)</span>th observation has a different set of observed values for the <span class="math notranslate nohighlight">\(p\)</span> regressors if at least one of them is of <strong>continuous-type</strong>. This data sparsity puts <span class="math notranslate nohighlight">\(D_p\)</span> <a class="reference internal" href="#equation-deviance-bin-log">(4)</a> just in function of the fitted probabilities <span class="math notranslate nohighlight">\(\hat{pi}_i\)</span> and not on the observed values <span class="math notranslate nohighlight">\(y_i\)</span> (which tells us nothing about the agreement of our model with <span class="math notranslate nohighlight">\(p\)</span> regressors to the observed data!).</p>
+</div>
+<p>Still, for the case of Binary Logistic regression, we can use the analysis of deviance to perform model selection <strong>between two models where one is nested in the other</strong> (as in this example for <strong>Model 1</strong> and <strong>Model 2</strong>). So we will use our two models: <code class="docutils literal notranslate"><span class="pre">binary_log_model_1</span></code> with <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> as a regressor, which is nested in <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code> with <code class="docutils literal notranslate"><span class="pre">mean_radius</span></code> and <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code> as regressors.</p>
+<p>This specific model selection will involve a hypothesis testing. The hypotheses are:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0: \textbf{Model 1} \text{ fits the data better than } \textbf{Model 2} \\
+H_a: \text{otherwise.}
+\end{gather*}\end{split}\]</div>
+<p>We have to use the multipurpose function <code class="docutils literal notranslate"><span class="pre">anova()</span></code> in the following way:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">anova</span><span class="p">(</span><span class="n">binary_log_model_1</span><span class="p">,</span>
+  <span class="n">binary_log_model_2</span><span class="p">,</span>
+  <span class="n">test</span> <span class="o">=</span> <span class="s">&quot;Chi&quot;</span>
+<span class="p">),</span> <span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A anova: 2 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>Resid. Df</th><th scope=col>Resid. Dev</th><th scope=col>Df</th><th scope=col>Deviance</th><th scope=col>Pr(&gt;Chi)</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>567</td><td>330.0108</td><td>NA</td><td>     NA</td><td>NA</td></tr>
+	<tr><th scope=row>2</th><td>566</td><td>291.1233</td><td> 1</td><td>38.8875</td><td> 0</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Let <span class="math notranslate nohighlight">\(D_2\)</span> be the deviance (column <code class="docutils literal notranslate"><span class="pre">Resid.</span> <span class="pre">Dev</span></code>) for <strong>Model 2</strong> (<code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code>) in row 2 and <span class="math notranslate nohighlight">\(D_1\)</span> (column <code class="docutils literal notranslate"><span class="pre">Resid.</span> <span class="pre">Dev</span></code>) the deviance for <strong>Model 1</strong> (<code class="docutils literal notranslate"><span class="pre">binary_log_model_1</span></code>) in row 1. The test statistic <span class="math notranslate nohighlight">\(\Delta_D\)</span> (column <code class="docutils literal notranslate"><span class="pre">Deviance</span></code>) for the analysis of deviance is given by:</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta_D = D_1 - D_2 \sim \chi^2_{1},
+\]</div>
+<p>which <strong>assymptotically</strong> (i.e., <span class="math notranslate nohighlight">\(n \rightarrow \infty\)</span>) is Chi-squared distributed with <span class="math notranslate nohighlight">\(1\)</span> degree of freedom (column <code class="docutils literal notranslate"><span class="pre">Df</span></code>) under <span class="math notranslate nohighlight">\(H_0\)</span> <strong>for this specific case</strong>. In general, the degrees of freedom are the <strong>regression parameters of difference between both models</strong> (this has an impact on the factor-type explanatory variables with more than one dummy variable). Formally, this is called the <strong>likelihood-ratio test</strong>.</p>
+<p>We obtain a <span class="math notranslate nohighlight">\(p\text{-value} &lt; .001\)</span>, column <code class="docutils literal notranslate"><span class="pre">Pr(&gt;Chi)</span></code>, which gives us evidence to reject <span class="math notranslate nohighlight">\(H_0\)</span>. Hence, <strong>we do not have evidence</strong> to conclude that <code class="docutils literal notranslate"><span class="pre">binary_log_model_1</span></code> fits the data better than <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code>. In the context of model selection, adding <code class="docutils literal notranslate"><span class="pre">mean_texture</span></code> provides a better fitted model. Hence, we would choose <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code>.</p>
+</section>
+<section id="akaike-information-criterion-aic">
+<h3>1.3. Akaike Information Criterion (AIC)<a class="headerlink" href="#akaike-information-criterion-aic" title="Permalink to this headline">#</a></h3>
+<p><strong>One of the drawbacks of the analysis of deviance</strong> is that it only allows to test <strong>nested</strong> regression models when we have sparse data (each response is associated with a different set of values in the regressors).</p>
+<p>Fortunately, we have alternatives for model selection. <strong>The AIC makes possible to compare models that are either nested or not.</strong> For a model with <span class="math notranslate nohighlight">\(p\)</span> model terms and a deviance <span class="math notranslate nohighlight">\(D_p\)</span> is defined as:</p>
+<div class="math notranslate nohighlight" id="equation-aic">
+<span class="eqno">(5)<a class="headerlink" href="#equation-aic" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mbox{AIC}_p = D_p + 2p.
+\end{equation}\]</div>
+<p>Models with <strong>smaller</strong> values of <span class="math notranslate nohighlight">\(\mbox{AIC}_p\)</span> are preferred. <span class="math notranslate nohighlight">\(\mbox{AIC}_p\)</span> favours models with small values of <span class="math notranslate nohighlight">\(D_p\)</span>.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>However, <span class="math notranslate nohighlight">\(\mbox{AIC}_p\)</span> penalizes for including more regressors in the model. Hence, it discourages overfitting, which is key in model selection. We select that model with the smallest <span class="math notranslate nohighlight">\(\mbox{AIC}_p\)</span>.</p>
+</div>
+<p>The function <code class="docutils literal notranslate"><span class="pre">glance()</span></code> shows us the <span class="math notranslate nohighlight">\(\mbox{AIC}_p\)</span> by model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">glance</span><span class="p">(</span><span class="n">binary_log_model_1</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 8</caption>
+<thead>
+	<tr><th scope=col>null.deviance</th><th scope=col>df.null</th><th scope=col>logLik</th><th scope=col>AIC</th><th scope=col>BIC</th><th scope=col>deviance</th><th scope=col>df.residual</th><th scope=col>nobs</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>751.44</td><td>568</td><td>-165.005</td><td>334.011</td><td>342.699</td><td>330.011</td><td>567</td><td>569</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">glance</span><span class="p">(</span><span class="n">binary_log_model_2</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 8</caption>
+<thead>
+	<tr><th scope=col>null.deviance</th><th scope=col>df.null</th><th scope=col>logLik</th><th scope=col>AIC</th><th scope=col>BIC</th><th scope=col>deviance</th><th scope=col>df.residual</th><th scope=col>nobs</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>751.44</td><td>568</td><td>-145.562</td><td>297.123</td><td>310.155</td><td>291.123</td><td>566</td><td>569</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Following the results of the <code class="docutils literal notranslate"><span class="pre">AIC</span></code> column, we choose <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code> over <code class="docutils literal notranslate"><span class="pre">binary_log_model_1</span></code>.</p>
+</section>
+<section id="bayesian-information-criterion-bic">
+<h3>1.4. Bayesian Information Criterion (BIC)<a class="headerlink" href="#bayesian-information-criterion-bic" title="Permalink to this headline">#</a></h3>
+<p>An alternative to AIC is BIC. <strong>The BIC also makes possible to compare models that are either nested or not.</strong> For a model with <span class="math notranslate nohighlight">\(p\)</span> regressors, <span class="math notranslate nohighlight">\(n\)</span> observations used for fitting, and a deviance <span class="math notranslate nohighlight">\(D_p\)</span> is defined as:</p>
+<div class="math notranslate nohighlight" id="equation-bic">
+<span class="eqno">(6)<a class="headerlink" href="#equation-bic" title="Permalink to this equation">#</a></span>\[\mbox{BIC}_p = D_p + p \log (n).\]</div>
+<p>Models with <strong>smaller</strong> values of <span class="math notranslate nohighlight">\(\mbox{BIC}_p\)</span> are preferred. <span class="math notranslate nohighlight">\(\mbox{BIC}_p\)</span> also favours models with small values of <span class="math notranslate nohighlight">\(D_p\)</span>.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The differences between AIC and BIC will be more pronounced in datasets with large sample sizes <span class="math notranslate nohighlight">\(n\)</span>. As the BIC penalty of <span class="math notranslate nohighlight">\(p \log (n)\)</span> will always be larger than the AIC penalty of <span class="math notranslate nohighlight">\(2p\)</span> when <span class="math notranslate nohighlight">\(n &gt; 7\)</span>, <strong>BIC tends to select models with fewer regressors than AIC</strong>.</p>
+</div>
+<p>Following the results of the <code class="docutils literal notranslate"><span class="pre">BIC</span></code> column above, we also choose <code class="docutils literal notranslate"><span class="pre">binary_log_model_2</span></code> over <code class="docutils literal notranslate"><span class="pre">binary_log_model_1</span></code> (column <code class="docutils literal notranslate"><span class="pre">BIC</span></code>).</p>
+</section>
+</section>
+<section id="poisson-regression">
+<h2>2. Poisson Regression<a class="headerlink" href="#poisson-regression" title="Permalink to this headline">#</a></h2>
+<p>It is time to move on to another GLM framework: <strong>count regression</strong>. As its name says, this class of modelling addresses count-type responses (i.e., integers). As in any other GLM, there will be a <strong>link function</strong> which will allow us <strong>to relate the systematic component with the response’s mean</strong>. Moreover, there is more than one approach in count regression: <strong>Poisson</strong>, <strong>Quasi-Poisson</strong>, and <strong>Negative Binomial</strong>. Poisson regression is the first one we should use when handling a count response.</p>
+<section id="the-crabs-dataset">
+<h3>2.1. The Crabs Dataset<a class="headerlink" href="#the-crabs-dataset" title="Permalink to this headline">#</a></h3>
+<p>The data frame <code class="docutils literal notranslate"><span class="pre">crabs</span></code> (<a class="reference external" href="https://ubc.summon.serialssolutions.com/2.0.0/link/0/eLvHCXMwrV3JasMwEBUlpZBLl7Sl6YY_oE4sy5sgFEpICKU9NadcjFYSmtghCyRf0t-tJC_EPhRaepMHS8jSSPM0M3oGALkdx67tCYRyKV0GacCp9CBX60RCySMcYiigy2qpOq_F1ZiMLqL0v-mFYrZvvd4JXXcPEnOUZbU1z6W-fxdoh6eO-XQUvDyGCnXrbK_hxCkDDCHKgs9KH20FelDOR_pzWxXbdYhljTEanoF10e8iC6V2SbDK9Pg_H3gOTnPsar1kynYBjkTSAs1yC923wMkkNaVL8NVbkNXn8wcxjJ8b0euaZysTvyuzVJUYH9i6Kpsl1ijVOSbTtPZ2f6V6nYuectnbbLGdb2tNLNP5fjkVi1J-BcbDwbg_svOfQNhMIRdsu4KHEnIsIiQYJoGQvsKQmAuOsE8lojRnrPEIlZQHHIUEEs8PBVHQjaJr0EjSRNwAS8ebmMNk4DHkRYgQSt2ARoxRnzuhJG2AitmNlxnVR3x4REI41sMf6-GP8-GPd20QmVn7RZV4MB7p0u3fq96BZpY-rn1B96CxWW3FgyGOeDR6_g1rIQSN">Brockmann, 1996</a>) is a dataset detailing the <strong>counts of satellite male crabs</strong> residing around a female crab nest. The code below renames the original response’s name, <code class="docutils literal notranslate"><span class="pre">satell</span></code>, to <code class="docutils literal notranslate"><span class="pre">n_males</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">crabs</span><span class="p">)</span>
+<span class="n">crabs</span> <span class="o">&lt;-</span> <span class="n">crabs</span> <span class="o">%&gt;%</span>
+  <span class="nf">rename</span><span class="p">(</span><span class="n">n_males</span> <span class="o">=</span> <span class="n">satell</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+<span class="n">crabs</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 173 × 5</caption>
+<thead>
+	<tr><th scope=col>color</th><th scope=col>spine</th><th scope=col>width</th><th scope=col>n_males</th><th scope=col>weight</th></tr>
+	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>medium</td><td>bad </td><td>28.3</td><td>8</td><td>3050</td></tr>
+	<tr><td>dark  </td><td>bad </td><td>22.5</td><td>0</td><td>1550</td></tr>
+	<tr><td>light </td><td>good</td><td>26.0</td><td>9</td><td>2300</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>light </td><td>good  </td><td>28.0</td><td>0</td><td>2625</td></tr>
+	<tr><td>darker</td><td>bad   </td><td>27.0</td><td>0</td><td>2625</td></tr>
+	<tr><td>medium</td><td>middle</td><td>24.5</td><td>0</td><td>2000</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The data frame <code class="docutils literal notranslate"><span class="pre">crabs</span></code> contains 173 observations on horseshoe crabs (Limulus polyphemus). The response is the count of male crabs (<code class="docutils literal notranslate"><span class="pre">n_males</span></code>) around a female breeding nest. It is subject to four explanatory variables: <code class="docutils literal notranslate"><span class="pre">color</span></code> of the prosoma with four levels (nominal factor-type), the condition of the posterior <code class="docutils literal notranslate"><span class="pre">spine</span></code> with three levels (nominal factor-type), the continuous variables carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> (mm), and <code class="docutils literal notranslate"><span class="pre">weight</span></code> (g).</p>
+</div>
+<div class="admonition-main-statistical-inquiry admonition">
+<p class="admonition-title">Main statistical inquiry</p>
+<p>Let us suppose we want to assess whether <code class="docutils literal notranslate"><span class="pre">n_males</span></code> and <code class="docutils literal notranslate"><span class="pre">width</span></code> are statistically associated and by how much.</p>
+</div>
+</section>
+<section id="exploratory-data-analysis">
+<h3>2.2. Exploratory Data Analysis<a class="headerlink" href="#exploratory-data-analysis" title="Permalink to this headline">#</a></h3>
+<p>Before getting into any estimation and inference, performing the corresponding exploratory data analysis (EDA) is necessary. Therefore, we will make a scatterplot of <code class="docutils literal notranslate"><span class="pre">n_males</span></code> versus carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> (see below), <strong>even though <code class="docutils literal notranslate"><span class="pre">n_males</span></code> is not continuous</strong>. <strong>Note the characteristic horizontal pattern in the points below since the <span class="math notranslate nohighlight">\(y\)</span>-axis has repeated counts associated with different <code class="docutils literal notranslate"><span class="pre">width</span></code> values</strong>. This plot pattern paves the way for using a count regression model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">options</span><span class="p">(</span><span class="n">repr.plot.height</span> <span class="o">=</span> <span class="m">9</span><span class="p">,</span> <span class="n">repr.plot.width</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span>
+<span class="n">plot_crabs_vs_width</span> <span class="o">&lt;-</span> <span class="n">crabs</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">n_males</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Number of Male Crabs&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s">&quot;Carapace Width (mm)&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Scatterplot of Number of Male Crabs Versus Carapace Width&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">31</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">27</span><span class="p">)</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">limits</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">20</span><span class="p">,</span> <span class="m">35</span><span class="p">),</span> <span class="n">breaks</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">35</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="m">2.5</span><span class="p">))</span>
+<span class="n">plot_crabs_vs_width</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_count_regression_40_0.png" src="../_images/DSCI_562_lecture_glm_count_regression_40_0.png" />
+</div>
+</div>
+<p><strong>Do you think <code class="docutils literal notranslate"><span class="pre">n_males</span></code> increases with the carapace <code class="docutils literal notranslate"><span class="pre">width</span></code>?</strong> It is pretty tricky to tell with this particular point pattern!</p>
+<p>Since the scatterplot above is too hard to visualize, let us make a clever visualization. Firstly, we could calculate the average <code class="docutils literal notranslate"><span class="pre">n_males</span></code> using a few carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> groups.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">group_avg_width</span> <span class="o">&lt;-</span> <span class="n">crabs</span> <span class="o">%&gt;%</span> 
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">intervals</span> <span class="o">=</span> <span class="nf">cut</span><span class="p">(</span><span class="n">crabs</span><span class="o">$</span><span class="n">width</span><span class="p">,</span> <span class="n">breaks</span><span class="o">=</span><span class="m">10</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  <span class="nf">group_by</span><span class="p">(</span><span class="n">intervals</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  <span class="nf">summarise</span><span class="p">(</span><span class="n">mean</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">n_males</span><span class="p">),</span> <span class="n">n</span> <span class="o">=</span> <span class="nf">n</span><span class="p">())</span> 
+<span class="n">group_avg_width</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 10 × 3</caption>
+<thead>
+	<tr><th scope=col>intervals</th><th scope=col>mean</th><th scope=col>n</th></tr>
+	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(21,22.2]  </td><td>0.000000</td><td> 2</td></tr>
+	<tr><td>(22.2,23.5]</td><td>1.000000</td><td>14</td></tr>
+	<tr><td>(23.5,24.8]</td><td>1.769231</td><td>26</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>(29.8,31]  </td><td>4.857143</td><td>7</td></tr>
+	<tr><td>(31,32.2]  </td><td>3.000000</td><td>2</td></tr>
+	<tr><td>(32.2,33.5]</td><td>7.000000</td><td>1</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Then, we create another scatterplot using these <code class="docutils literal notranslate"><span class="pre">n_males</span></code> averages by <code class="docutils literal notranslate"><span class="pre">width</span></code> bins (as shown in the code below). Now it is easier to visualize and state, <strong>descriptively</strong>, that there is a positive relationship between carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> and <code class="docutils literal notranslate"><span class="pre">n_males</span></code>.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Nevertheless, we need to find a suitable regression model to statistically confirm this descriptive conclusion!</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">crabs_avg_width_plot</span> <span class="o">&lt;-</span> <span class="n">group_avg_width</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span> <span class="n">mean</span><span class="p">),</span> <span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">4</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Mean Number of Male Crabs&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s">&quot;Carapace Width Interval (mm)&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Mean Number of Male Crabs Versus Carapace Width by Interval&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">31</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">27</span><span class="p">)</span>
+  <span class="p">)</span>
+<span class="n">crabs_avg_width_plot</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_count_regression_44_0.png" src="../_images/DSCI_562_lecture_glm_count_regression_44_0.png" />
+</div>
+</div>
+<p>Given that <code class="docutils literal notranslate"><span class="pre">n_males</span></code> is a count-type response, a more appropriate standalone plot is a <strong>bar chart</strong> (as shown in the code below). This bar chart is giving us visual evidence of a possible <strong>Poisson random variable</strong>, note the <strong>right-skewness</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">crabs_avg_width_bar_chart</span> <span class="o">&lt;-</span> <span class="n">crabs</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">geom_bar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">n_males</span><span class="p">)),</span> <span class="n">fill</span> <span class="o">=</span> <span class="s">&quot;grey&quot;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">31</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">27</span><span class="p">)</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Bar Chart of Counts by Numbers of Male Crabs&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&quot;Number of Male Crabs&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Count&quot;</span><span class="p">)</span>
+<span class="n">crabs_avg_width_bar_chart</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_count_regression_46_0.png" src="../_images/DSCI_562_lecture_glm_count_regression_46_0.png" />
+</div>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The distribution of the counts in the response <code class="docutils literal notranslate"><span class="pre">n_males</span></code> is suggesting a possible Poisson distribution. Hence we might use Poisson regression to assess whether carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> is related to <code class="docutils literal notranslate"><span class="pre">n_males</span></code> and quantify the magnitude of the regressor’s association (as well as the respective uncertainty associated with its estimation).</p>
+</div>
+</section>
+<section id="general-modelling-framework">
+<h3>2.3. General Modelling Framework<a class="headerlink" href="#general-modelling-framework" title="Permalink to this headline">#</a></h3>
+<p>Besides OLS and Binary Logistic regressions, another alternative is count data modelling, as in Poisson regression. Unlike Binary Logistic regression, <strong>we use counts as a response variable</strong>. Hence, we have to modify the framework to consider this fact. Poisson regression would be the primary resource when it comes to modelling counts. This model also fits into the GLM class.</p>
+<p>Recall that the residual component in the OLS regression model, namely <span class="math notranslate nohighlight">\(\varepsilon_i\)</span>, is assumed to be Normal, making the response <span class="math notranslate nohighlight">\(Y_i\)</span> Normal. Therefore, <strong>what is the distributional key difference between the Poisson and the OLS regression models in terms of the response?</strong> First of all, we have to specify what a Poisson random variable is. Recall <strong>DSCI 551</strong>, a Poisson random variable refers to discrete data with non-negative integer values that count something. <strong>These counts could happen during a given timeframe or even a space such as a geographic unit!</strong></p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>A particularity of a Poisson random variable is that its mean equals its variance (an inconsistency in <strong>Dimensional Analysis</strong>!). Thus, any factor that affects the mean will also affect the variance. This fact could be a potential drawback for using a Poisson regression model. Nonetheless, an alternative count modelling option could overcome this potential issue, which we will explain further.</p>
+</div>
+<p>The Poisson regression model assumes a random sample of <span class="math notranslate nohighlight">\(n\)</span> count observations <span class="math notranslate nohighlight">\(Y_i\)</span>s, hence <strong>independent</strong> (<strong>but not identically distributed!</strong>), which have the following distribution:</p>
+<div class="math notranslate nohighlight">
+\[Y_i \sim \text{Poisson}(\lambda_i)\]</div>
+<p>Each <span class="math notranslate nohighlight">\(i\)</span>th observation has its own <span class="math notranslate nohighlight">\(\mathbb{E}(Y_i) = \lambda_i &gt; 0\)</span>, which also implicates <span class="math notranslate nohighlight">\(\text{Var}(Y_i) = \lambda_i &gt; 0\)</span>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The equality of the expected value and variance in a random variable is called <strong>equidispersion</strong>.</p>
+</div>
+<p>Parameter <span class="math notranslate nohighlight">\(\lambda_i\)</span> is the risk of an event occurrence, coming from the definition of the Poisson random variable, in a given timeframe or even a space.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>We have to highlight another particularity in this distribution: <strong><span class="math notranslate nohighlight">\(\lambda_i\)</span> is continuous!</strong></p>
+</div>
+<p>For our <code class="docutils literal notranslate"><span class="pre">crabs</span></code> dataset, the events are the number of male crabs (<code class="docutils literal notranslate"><span class="pre">n_males</span></code>) around a space: <strong>the female breeding nest</strong>. Since we want to make inference on whether the carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> is related to the response <code class="docutils literal notranslate"><span class="pre">n_males</span></code>, then we could use Poisson regression.</p>
+<p>Since the Poisson Regression model is also a GLM, we need to set up a <strong>link function <span class="math notranslate nohighlight">\(h(\lambda_i)\)</span></strong> for the mean.</p>
+<p>Let <span class="math notranslate nohighlight">\(X_{\texttt{width}_i}\)</span> be the <span class="math notranslate nohighlight">\(i\)</span>th value for the regressor <code class="docutils literal notranslate"><span class="pre">width</span></code> in our dataset. An easy modelling solution would be an <strong>identity</strong> link function as in</p>
+<div class="math notranslate nohighlight">
+\[
+h(\lambda_i) = \lambda_i = \beta_0 + \beta_1 X_{\texttt{width}_i}.
+\]</div>
+<p>However, again, <strong>we have a response range issue!</strong></p>
+<p>The model above for <span class="math notranslate nohighlight">\(h(\lambda_i)\)</span> has a significant drawback: <strong>the right-hand side is allowed to take on even negative values</strong>, which does not align with the nature of the parameter <span class="math notranslate nohighlight">\(\lambda_i\)</span> (<strong>that always has to be non-negative</strong>). Recall the essential characteristic of a GLM that should come into play for a link function. In this class of models, the direct relationship between the original response and the regressors may be <strong>non-linear</strong> in <span class="math notranslate nohighlight">\(h(\lambda_i)\)</span>. Hence, instead of using the identity link function <span class="math notranslate nohighlight">\(\lambda_i\)</span>, <strong>we will use the natural logarithm of the mean<span class="math notranslate nohighlight">\(: \log(\lambda_i)\)</span></strong>.</p>
+<p>Before continuing with the <code class="docutils literal notranslate"><span class="pre">crabs</span></code> dataset, let us generalize the Poisson regression model with <span class="math notranslate nohighlight">\(p\)</span> regressors as:</p>
+<div class="math notranslate nohighlight" id="equation-poisson-model">
+<span class="eqno">(7)<a class="headerlink" href="#equation-poisson-model" title="Permalink to this equation">#</a></span>\[\begin{equation*}
+h(\lambda_i) = \log(\lambda_i) = \beta_0 + \beta_1 X_{i,1} + \dots + \beta_p X_{i,p}.
+\end{equation*}\]</div>
+<p>In model <a class="reference internal" href="#equation-poisson-model">(7)</a>, each one of the <span class="math notranslate nohighlight">\(p\)</span> regression coefficients <span class="math notranslate nohighlight">\(\beta_{1}, \dots, \beta_{p}\)</span> represents <strong>the expected change in the natural logarithm of the mean <span class="math notranslate nohighlight">\(\lambda_i\)</span> per unit change in their respective regressors <span class="math notranslate nohighlight">\(X_{i,1}, \dots, X_{i,p}\)</span></strong>. Nonetheless, we could make more sense in the interpretation by exponentiating <a class="reference internal" href="#equation-poisson-model">(7)</a>:</p>
+<div class="math notranslate nohighlight">
+\[
+\lambda_i = \exp{(\beta_0 + \beta_1 X_{i,1} + \dots + \beta_p X_{i,p})},
+\]</div>
+<p>where an increase in one unit in any of the <span class="math notranslate nohighlight">\(p\)</span> regressors (<strong>while keeping the rest of them constant</strong>) <strong>multiplies the mean <span class="math notranslate nohighlight">\(\lambda_i\)</span> by a factor <span class="math notranslate nohighlight">\(\exp{(\beta_j)}\)</span>, for all <span class="math notranslate nohighlight">\(j = 1, \dots, p\)</span></strong>.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">crabs</span></code> dataset with <code class="docutils literal notranslate"><span class="pre">width</span></code> as a regressor, the Poisson regression model is depicted as:</p>
+<div class="math notranslate nohighlight">
+\[
+h(\lambda_i) = \log(\lambda_i) = \beta_0 + \beta_1 X_{\texttt{width}_i}.
+\]</div>
+<p>As a side note, we have to clarify that the <strong>systematic component</strong> in the Poisson regression model is explicitly depicted by the regressors and their coefficients as in multiple linear regression. The <strong>random component</strong> is implicitly contained in each random variable</p>
+<div class="math notranslate nohighlight">
+\[Y_i \sim \text{Poisson}(\lambda_i).\]</div>
+</section>
+<section id="estimation">
+<h3>2.4. Estimation<a class="headerlink" href="#estimation" title="Permalink to this headline">#</a></h3>
+<p>Under a general framework with <span class="math notranslate nohighlight">\(p\)</span> regressors, the <strong>regression parameters</strong> <span class="math notranslate nohighlight">\(\beta_0, \beta_1, \dots, \beta_p\)</span> in the model are also unknown. In order to estimate them, we will use function <code class="docutils literal notranslate"><span class="pre">glm()</span></code> and its argument <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">poisson</span></code> (required to specify the Poisson nature of the response), which obtains the estimates <span class="math notranslate nohighlight">\(\hat{\beta}_0, \hat{\beta}_1, \dots \hat{\beta}_p\)</span>.</p>
+<p>The estimates are obtained through <strong>maximum likelihood</strong> where we assume a <strong>Poisson joint probability mass function</strong> of the <span class="math notranslate nohighlight">\(n\)</span> responses <span class="math notranslate nohighlight">\(Y_i\)</span>.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>For the sake of coding clarity, you could also use <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">poisson(link</span> <span class="pre">=</span> <span class="pre">&quot;log&quot;)</span></code>. Nevertheless, <code class="docutils literal notranslate"><span class="pre">link</span> <span class="pre">=</span> <span class="pre">&quot;log&quot;</span></code> is a default in <code class="docutils literal notranslate"><span class="pre">glm()</span></code> for Poisson regression. Thus, <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">poisson</span></code> suffices when using the logarithmic function.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">poisson_model_1</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">n_males</span> <span class="o">~</span> <span class="n">width</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">crabs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="inference">
+<h3>2.5. Inference<a class="headerlink" href="#inference" title="Permalink to this headline">#</a></h3>
+<p><strong>The fitted regression model will be used to identify the relationship between the logarithm of the response’s mean and regressors.</strong> To determine the <strong>statistical significance</strong> of <span class="math notranslate nohighlight">\(\beta_j\)</span> in this model, we also use the <strong>Wald statistic <span class="math notranslate nohighlight">\(z_j\)</span></strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+z_j = \frac{\hat{\beta}_j}{\mbox{se}(\hat{\beta}_j)}
+\]</div>
+<p>to test the hypotheses</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0: \beta_j = 0 \\
+H_a: \beta_j \neq 0;
+\end{gather*}\end{split}\]</div>
+<p>where the <strong>null hypothesis</strong> <span class="math notranslate nohighlight">\(H_0\)</span> indicates that the <span class="math notranslate nohighlight">\(j\)</span>th regressor associated to <span class="math notranslate nohighlight">\(\beta_j\)</span> does not have any association on the response variable in the model, and the <strong>alternative hypothesis</strong> <span class="math notranslate nohighlight">\(H_a\)</span> otherwise.</p>
+<p><code class="docutils literal notranslate"><span class="pre">R</span></code> provides the corresponding <strong><span class="math notranslate nohighlight">\(p\)</span>-values</strong> for each <span class="math notranslate nohighlight">\(\beta_j\)</span>. The smaller the <span class="math notranslate nohighlight">\(p\)</span>-value, the stronger the evidence against the null hypothesis <span class="math notranslate nohighlight">\(H_0\)</span>. As in the previous regression models, we would set a predetermined significance level <span class="math notranslate nohighlight">\(\alpha\)</span> to infer if the <span class="math notranslate nohighlight">\(p\)</span>-value is small enough. If the <span class="math notranslate nohighlight">\(p\)</span>-value is smaller than the predetermined level <span class="math notranslate nohighlight">\(\alpha\)</span>, then we could claim that there is evidence to reject the null hypothesis. Hence, <span class="math notranslate nohighlight">\(p\)</span>-values that are small enough indicate that the data provides evidence in favour of <strong>association</strong> (<strong>or causation in the case of an experimental study!</strong>) between the response variable and the <span class="math notranslate nohighlight">\(j\)</span>th regressor.</p>
+<p>Furthermore, given a specified level of confidence where <span class="math notranslate nohighlight">\(\alpha\)</span> is the significance level, we can construct approximate <span class="math notranslate nohighlight">\((1 - \alpha) \times 100\%\)</span> <strong>confidence intervals</strong> for the corresponding true value of <span class="math notranslate nohighlight">\(\beta_j\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{\beta}_j \pm z_{\alpha/2}\mbox{se}(\hat{\beta}_j),
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(z_{\alpha/2}\)</span> is the upper <span class="math notranslate nohighlight">\(\alpha/2\)</span> quantile of the <strong>Standard Normal distribution</strong>.</p>
+<p>Now, we can answer the following: <strong>is caparace width statistically associated to the logarithm of mean of the counts of satellite male crabs residing around a female crab nest?</strong> We can also use the function <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> from the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package along with argument <code class="docutils literal notranslate"><span class="pre">conf.int</span> <span class="pre">=</span> <span class="pre">TRUE</span></code> to get the 95% confidence intervals <strong>by default</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">poisson_model_1</span><span class="p">,</span> <span class="n">conf.int</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td>-3.305</td><td>0.542</td><td>-6.095</td><td>0</td><td>-4.366</td><td>-2.241</td></tr>
+	<tr><td>width      </td><td> 0.164</td><td>0.020</td><td> 8.216</td><td>0</td><td> 0.125</td><td> 0.203</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Our sample gives us evidence to reject <span class="math notranslate nohighlight">\(H_0\)</span> (<span class="math notranslate nohighlight">\(p\text{-value} &lt; .001\)</span>). So carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> is statistically associated to the logarithm of the mean of <code class="docutils literal notranslate"><span class="pre">n_males</span></code>.</p>
+<p>Now, it is time to plot the fitted values coming from <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code> to check whether it provides a positive relationship between carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> and the <strong>original scale</strong> of the response <code class="docutils literal notranslate"><span class="pre">n_males</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">plot_crabs_vs_width</span> <span class="o">&lt;-</span> <span class="n">plot_crabs_vs_width</span> <span class="o">+</span>
+  <span class="nf">geom_smooth</span><span class="p">(</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">crabs</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">n_males</span><span class="p">),</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="s">&quot;glm&quot;</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span> <span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span>
+    <span class="n">method.args</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">family</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">),</span> <span class="n">se</span> <span class="o">=</span> <span class="kc">FALSE</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Poisson Regression&quot;</span><span class="p">)</span>
+<span class="n">plot_crabs_vs_width</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_count_regression_62_0.png" src="../_images/DSCI_562_lecture_glm_count_regression_62_0.png" />
+</div>
+</div>
+<p>The blue line in the plot above is the fitted Poisson regression of <code class="docutils literal notranslate"><span class="pre">n_males</span></code> versus carapace <code class="docutils literal notranslate"><span class="pre">width</span></code>. The positive relationship is now clear with this regression line.</p>
+</section>
+<section id="coefficient-interpretation">
+<h3>2.6. Coefficient Interpretation<a class="headerlink" href="#coefficient-interpretation" title="Permalink to this headline">#</a></h3>
+<p>Let us fit a second model with two regressors: <code class="docutils literal notranslate"><span class="pre">width</span></code> (<span class="math notranslate nohighlight">\(X_{\texttt{width}_i}\)</span>) and <code class="docutils literal notranslate"><span class="pre">color</span></code> (<span class="math notranslate nohighlight">\(X_{\texttt{color_darker}_i}\)</span>, <span class="math notranslate nohighlight">\(X_{\texttt{color_light}_i}\)</span>, and <span class="math notranslate nohighlight">\(X_{\texttt{color_medium}_i}\)</span>) for the <span class="math notranslate nohighlight">\(i\)</span>th observation:</p>
+<div class="math notranslate nohighlight">
+\[
+h(\lambda_i) = \log (\lambda_i) = \beta_0 + \beta_1 X_{\texttt{width}_i} + \beta_2 X_{\texttt{color_darker}_i} + \beta_3 X_{\texttt{color_light}_i} + \beta_4 X_{\texttt{color_medium}_i}.
+\]</div>
+<p>The explanatory variable <code class="docutils literal notranslate"><span class="pre">color</span></code> is of <strong>factor-type</strong> (<strong>discrete</strong>) and <strong>nominal</strong> (its levels do not follow any specific order). Moreover, it has a baseline: <code class="docutils literal notranslate"><span class="pre">dark</span></code>. <strong>We can check the baseline level, via <code class="docutils literal notranslate"><span class="pre">levels()</span></code>, which is on the left-hand side.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">levels</span><span class="p">(</span><span class="n">crabs</span><span class="o">$</span><span class="n">color</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'dark'</li><li>'darker'</li><li>'light'</li><li>'medium'</li></ol>
+</div></div>
+</div>
+<p>Using explanatory variables such as <code class="docutils literal notranslate"><span class="pre">color</span></code> involves using <strong>dummy variables</strong> shown in <a class="reference external" href="https://pages.github.ubc.ca/MDS-2022-23/DSCI_562_regr-2_students/notes/lecture1_glm_logistic_regression.html#dummy-var"><strong>this table</strong></a>, such as in Binary Logistic regression. For example, the explanatory variable <code class="docutils literal notranslate"><span class="pre">color</span></code> has four levels; thus, this Poisson regression model will incorporate three dummy variables: <span class="math notranslate nohighlight">\(X_{\texttt{color_darker}_i}\)</span>, <span class="math notranslate nohighlight">\(X_{\texttt{color_light}_i}\)</span>, and <span class="math notranslate nohighlight">\(X_{\texttt{color_medium}_i}\)</span>. Depending on the <code class="docutils literal notranslate"><span class="pre">color</span></code>, these dummy variables take on the following values:</p>
+<ul class="simple">
+<li><p>When <code class="docutils literal notranslate"><span class="pre">color</span></code> is <code class="docutils literal notranslate"><span class="pre">darker</span></code>, then <span class="math notranslate nohighlight">\(X_{\texttt{color_darker}_i} = 1\)</span> while the other two dummy variables <span class="math notranslate nohighlight">\(X_{\texttt{color_light}_i} = X_{\texttt{color_medium}_i} = 0\)</span>.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">color</span></code> is <code class="docutils literal notranslate"><span class="pre">light</span></code>, then <span class="math notranslate nohighlight">\(X_{\texttt{light}_i} = 1\)</span> while the other two dummy variables <span class="math notranslate nohighlight">\(X_{\texttt{color_darker}_i} = X_{\texttt{color_medium}_i} = 0\)</span>.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">color</span></code> is <code class="docutils literal notranslate"><span class="pre">medium</span></code>, then <span class="math notranslate nohighlight">\(X_{\texttt{medium}_i} = 1\)</span> while the other two dummy variables <span class="math notranslate nohighlight">\(X_{\texttt{color_darker}_i} = X_{\texttt{color_light}_i} = 0\)</span>.</p></li>
+</ul>
+<p>Note that the level <code class="docutils literal notranslate"><span class="pre">dark</span></code> is depicted as the baseline here. Hence, the interpretation of the coefficients in the model for each dummy variable will be to this baseline.</p>
+<p>Now, let us fit this second Poisson regression model:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">poisson_model_2</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">n_males</span> <span class="o">~</span> <span class="n">width</span> <span class="o">+</span> <span class="n">color</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">crabs</span><span class="p">)</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">poisson_model_2</span><span class="p">,</span> <span class="n">conf.int</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 5 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td>-3.086</td><td>0.557</td><td>-5.536</td><td>0.000</td><td>-4.178</td><td>-1.993</td></tr>
+	<tr><td>width      </td><td> 0.149</td><td>0.021</td><td> 7.166</td><td>0.000</td><td> 0.108</td><td> 0.190</td></tr>
+	<tr><td>colordarker</td><td>-0.011</td><td>0.180</td><td>-0.061</td><td>0.951</td><td>-0.373</td><td> 0.336</td></tr>
+	<tr><td>colorlight </td><td> 0.436</td><td>0.176</td><td> 2.474</td><td>0.013</td><td> 0.083</td><td> 0.776</td></tr>
+	<tr><td>colormedium</td><td> 0.237</td><td>0.118</td><td> 2.003</td><td>0.045</td><td> 0.009</td><td> 0.473</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We can see that <code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">colorlight</span></code>, and <code class="docutils literal notranslate"><span class="pre">colormedium</span></code> are significant according to the <code class="docutils literal notranslate"><span class="pre">p.value</span></code> column (with <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>).</p>
+<p>First, let us focus on the coefficient corresponding to carapace <code class="docutils literal notranslate"><span class="pre">width</span></code>, <strong>while keeping <code class="docutils literal notranslate"><span class="pre">color</span></code> constant</strong>. Consider an observation with a given value <span class="math notranslate nohighlight">\(X_{\texttt{width}} = \texttt{w}\)</span> mm, and another observation with a given <span class="math notranslate nohighlight">\(X_{\texttt{width + 1}} = \texttt{w} + 1\)</span> mm (i.e., an increase of <span class="math notranslate nohighlight">\(1\)</span> mm). Then we have their corresponding regression equations:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+\log \left( \lambda_{\texttt{width}} \right) = \beta_0 + \beta_1 \overbrace{\texttt{w}}^{X_{\texttt{width}}} + \overbrace{\beta_2 X_{\texttt{color_darker}} + \beta_3 X_{\texttt{color_light}} + \beta_4 X_{\texttt{color_medium}}}^{\text{Constant}} \\
+\log \left( \lambda_{\texttt{width + 1}} \right) = \beta_0 + \beta_1 \underbrace{(\texttt{w} + 1)}_{X_{\texttt{width + 1}}} + \underbrace{\beta_2 X_{\texttt{color_darker}} + \beta_3 X_{\texttt{color_light}} + \beta_4 X_{\texttt{color_medium}}.}_{\text{Constant}}
+\end{gather*}\end{split}\]</div>
+<p>We take the difference between both equations as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\log \left( \lambda_{\texttt{width + 1}} \right) - \log \left( \lambda_{\texttt{width1}} \right) &amp;= \beta_1 (\texttt{w} + 1) - \beta_1 \texttt{w} \\
+&amp;= \beta_1.
+\end{align*}\end{split}\]</div>
+<p>We apply the logarithm property for a ratio:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\log \left( \frac{\lambda_{\texttt{width + 1}} }{\lambda_{\texttt{width}}} \right) &amp;= \log \left( \lambda_{\texttt{width + 1}} \right) - \log \left( \lambda_{\texttt{width}} \right) \\
+&amp;= \beta_1.
+\end{align*}\end{split}\]</div>
+<p>Finally, we have to exponentiate the previous equation:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\lambda_{\texttt{width + 1}} }{\lambda_{\texttt{width}}} = e^{\beta_1}.
+\]</div>
+<p>The expression <span class="math notranslate nohighlight">\(\frac{\lambda_{\texttt{width + 1}} }{\lambda_{\texttt{width}}} = e^{\beta_1}\)</span> indicates that the response varies in a <strong>multiplicative way</strong> when increased 1 mm in carapace <code class="docutils literal notranslate"><span class="pre">width</span></code>.</p>
+<p>Therefore, by using the estimate <span class="math notranslate nohighlight">\(\hat{\beta}_1\)</span> (note the hat notation) coming from the model <code class="docutils literal notranslate"><span class="pre">poisson_model_2</span></code>, we calculate this multiplicative effect as follows (via <code class="docutils literal notranslate"><span class="pre">exponentiate</span> <span class="pre">=</span> <span class="pre">TRUE</span></code> in <code class="docutils literal notranslate"><span class="pre">tidy()</span></code>):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">poisson_model_2</span><span class="p">,</span> <span class="n">exponentiate</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> <span class="n">conf.int</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 5 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td>0.05</td><td>0.56</td><td>-5.54</td><td>0.00</td><td>0.02</td><td>0.14</td></tr>
+	<tr><td>width      </td><td>1.16</td><td>0.02</td><td> 7.17</td><td>0.00</td><td>1.11</td><td>1.21</td></tr>
+	<tr><td>colordarker</td><td>0.99</td><td>0.18</td><td>-0.06</td><td>0.95</td><td>0.69</td><td>1.40</td></tr>
+	<tr><td>colorlight </td><td>1.55</td><td>0.18</td><td> 2.47</td><td>0.01</td><td>1.09</td><td>2.17</td></tr>
+	<tr><td>colormedium</td><td>1.27</td><td>0.12</td><td> 2.00</td><td>0.05</td><td>1.01</td><td>1.60</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p><span class="math notranslate nohighlight">\(\frac{\hat{\lambda}_{\texttt{width + 1}} }{\hat{\lambda}_{\texttt{width}}} = e^{\hat{\beta}_1} = 1.16\)</span> indicates that <strong>the mean count of male crabs (<code class="docutils literal notranslate"><span class="pre">n_males</span></code>) around a female breeding nest</strong> increases by <span class="math notranslate nohighlight">\(16\%\)</span> when increasing the carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> by <span class="math notranslate nohighlight">\(1\)</span> mm, <strong>while keeping <code class="docutils literal notranslate"><span class="pre">color</span></code> constant</strong>.</p>
+<p>The interpretation of the significant coefficients corresponding to <code class="docutils literal notranslate"><span class="pre">color</span></code> (<code class="docutils literal notranslate"><span class="pre">colorlight</span></code> and <code class="docutils literal notranslate"><span class="pre">colormedium</span></code> with <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>) is associated to the baseline level <code class="docutils literal notranslate"><span class="pre">dark</span></code>.</p>
+<p>Consider two observations, one with <code class="docutils literal notranslate"><span class="pre">dark</span></code> <code class="docutils literal notranslate"><span class="pre">color</span></code> of the prosoma (the baseline) and another with <code class="docutils literal notranslate"><span class="pre">light</span></code> <code class="docutils literal notranslate"><span class="pre">color</span></code>. Their corresponding responses are denoted as <span class="math notranslate nohighlight">\(\lambda_{\texttt{D}}\)</span> (for <code class="docutils literal notranslate"><span class="pre">dark</span></code>) and <span class="math notranslate nohighlight">\(\lambda_{\texttt{L}}\)</span> (for <code class="docutils literal notranslate"><span class="pre">light</span></code>). While holding <span class="math notranslate nohighlight">\(X_{\texttt{width}}\)</span> constant, their regression equations are:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+\log \left( \lambda_{\texttt{D}} \right) = \beta_0 + \overbrace{\beta_1 X_{\texttt{width}}}^{\text{Constant}} + \beta_2 X_{\texttt{color_darker}_{\texttt{D}}} + \beta_3 X_{\texttt{color_light}_{\texttt{D}}} + \beta_4 X_{\texttt{color_medium}_{\texttt{D}}} \\
+\log \left( \lambda_{\texttt{L}} \right) = \beta_0 + \underbrace{\beta_1 X_{\texttt{width}}}_{\text{Constant}} + \beta_2 X_{\texttt{color_darker}_{\texttt{L}}} + \beta_3 X_{\texttt{color_light}_{\texttt{L}}} + \beta_4 X_{\texttt{color_medium}_{\texttt{L}}}
+\end{gather*}\end{split}\]</div>
+<p>The corresponding <code class="docutils literal notranslate"><span class="pre">color</span></code> indicator variables for both <span class="math notranslate nohighlight">\(\lambda_{\texttt{D}}\)</span> and <span class="math notranslate nohighlight">\(\lambda_{\texttt{L}}\)</span> take on these values:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\log \left( \lambda_{\texttt{D}} \right) &amp;= \beta_0 + \overbrace{\beta_1 X_{\texttt{width}}}^{\text{Constant}} + \beta_2 X_{\texttt{color_darker}_{\texttt{D}}} + \beta_3 X_{\texttt{color_light}_{\texttt{D}}} + \beta_4 X_{\texttt{color_medium}_{\texttt{D}}} \\
+&amp;= \beta_0 + \beta_1 X_{\texttt{width}}+ \beta_2 \times 0 + \beta_3 \times 0 + \beta_4 \times 0 \\
+&amp;= \beta_0 + \beta_1 X_{\texttt{width}}
+\end{align*}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\log \left( \lambda_{\texttt{L}} \right) &amp;= \beta_0 + \beta_1 X_{\texttt{width}} + \beta_2 X_{\texttt{color_darker}_{\texttt{L}}} + \beta_3 X_{\texttt{color_light}_{\texttt{L}}} + \beta_4 X_{\texttt{color_medium}_{\texttt{L}}} \\
+&amp;= \beta_0 + \beta_1 X_{\texttt{width}}+ \beta_2 \times 0 + \beta_3 \times 1 + \beta_4 \times 0 \\
+&amp;= \beta_0 + \underbrace{\beta_1 X_{\texttt{width}}}_{\text{Constant}} + \beta_3.
+\end{align*}\end{split}\]</div>
+<p>Therefore, <strong>what is the association of the level <code class="docutils literal notranslate"><span class="pre">light</span></code> with respect to <code class="docutils literal notranslate"><span class="pre">dark</span></code>?</strong> Let us take the differences again:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\log \left( \frac{\lambda_{\texttt{L}} }{\lambda_{\texttt{D}}} \right) &amp;= \log \left( \lambda_{\texttt{L}} \right) - \log \left( \lambda_{\texttt{D}} \right) \\
+&amp;= \beta_3.
+\end{align*}\end{split}\]</div>
+<p>Then, we exponentiate the previous equation:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\lambda_{\texttt{L}} }{\lambda_{\texttt{D}}} = e^{\beta_3}.
+\]</div>
+<p>The expression <span class="math notranslate nohighlight">\(\frac{\lambda_{\texttt{L}} }{\lambda_{\texttt{D}}} = e^{\beta_3}\)</span> indicates that the response varies in a <strong>multiplicative way</strong> when the <code class="docutils literal notranslate"><span class="pre">color</span></code> of the prosoma changes from <code class="docutils literal notranslate"><span class="pre">dark</span></code> to <code class="docutils literal notranslate"><span class="pre">light</span></code>.</p>
+<p>Therefore, by using the estimate <span class="math notranslate nohighlight">\(\hat{\beta}_3\)</span> (note the hat notation) coming from the model <code class="docutils literal notranslate"><span class="pre">poisson_model_2</span></code>, we calculate this multiplicative effect as follows (via <code class="docutils literal notranslate"><span class="pre">exponentiate</span> <span class="pre">=</span> <span class="pre">TRUE</span></code> in <code class="docutils literal notranslate"><span class="pre">tidy()</span></code>)::</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">poisson_model_2</span><span class="p">,</span> <span class="n">exponentiate</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> <span class="n">conf.int</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 5 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)</td><td>0.05</td><td>0.56</td><td>-5.54</td><td>0.00</td><td>0.02</td><td>0.14</td></tr>
+	<tr><td>width      </td><td>1.16</td><td>0.02</td><td> 7.17</td><td>0.00</td><td>1.11</td><td>1.21</td></tr>
+	<tr><td>colordarker</td><td>0.99</td><td>0.18</td><td>-0.06</td><td>0.95</td><td>0.69</td><td>1.40</td></tr>
+	<tr><td>colorlight </td><td>1.55</td><td>0.18</td><td> 2.47</td><td>0.01</td><td>1.09</td><td>2.17</td></tr>
+	<tr><td>colormedium</td><td>1.27</td><td>0.12</td><td> 2.00</td><td>0.05</td><td>1.01</td><td>1.60</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p><span class="math notranslate nohighlight">\(\frac{\hat{\lambda}_{\texttt{L}} }{\hat{\lambda}_{\texttt{D}}} = e^{\hat{\beta}_3} = 1.55\)</span> indicates that <strong>the mean count of male crabs (<code class="docutils literal notranslate"><span class="pre">n_males</span></code>) around a female breeding nest</strong> increases by <span class="math notranslate nohighlight">\(55\%\)</span> when the <code class="docutils literal notranslate"><span class="pre">color</span></code> of the prosoma changes from <code class="docutils literal notranslate"><span class="pre">dark</span></code> to <code class="docutils literal notranslate"><span class="pre">light</span></code>, <strong>while keeping the carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> constant</strong>.</p>
+</section>
+<section id="predictions">
+<h3>2.7. Predictions<a class="headerlink" href="#predictions" title="Permalink to this headline">#</a></h3>
+<p>Suppose we want to predict <strong>the mean count of male crabs (<code class="docutils literal notranslate"><span class="pre">n_males</span></code>) around a female breeding nest</strong> with a carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> of <span class="math notranslate nohighlight">\(27.5\)</span> mm and <code class="docutils literal notranslate"><span class="pre">light</span></code> <code class="docutils literal notranslate"><span class="pre">color</span></code> of the prosoma. We could use the model <code class="docutils literal notranslate"><span class="pre">poisson_model_2</span></code> for making such prediction as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">predict</span><span class="p">(</span><span class="n">poisson_model_2</span><span class="p">,</span> <span class="nf">tibble</span><span class="p">(</span><span class="n">width</span> <span class="o">=</span> <span class="m">27.5</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;light&quot;</span><span class="p">),</span>
+  <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;response&quot;</span>
+<span class="p">),</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><strong>1:</strong> 4.29</div></div>
+</div>
+<p>Note we have to use <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;response&quot;</span></code> in the function <code class="docutils literal notranslate"><span class="pre">predict()</span></code> to obtain the prediction <strong>on its original scale</strong>.</p>
+</section>
+<section id="model-selection">
+<h3>2.8. Model Selection<a class="headerlink" href="#model-selection" title="Permalink to this headline">#</a></h3>
+<p>We can also use the analysis of deviance to perform model selection between two Poisson models where one is nested in the other. Moreover, we can use this analysis to perform a <strong>goodness of fit test</strong>.</p>
+<section id="goodness-of-fit-test">
+<h4>2.8.1. Goodness of Fit Test<a class="headerlink" href="#goodness-of-fit-test" title="Permalink to this headline">#</a></h4>
+<p>First, recall deviance <span class="math notranslate nohighlight">\(D_p\)</span> is used to compare a given model with <span class="math notranslate nohighlight">\(p\)</span> regressors with that of a baseline model. The usual baseline model is the <strong>saturated model</strong>, which perfectly fits the data because it allows a distinct Poisson mean <span class="math notranslate nohighlight">\(\lambda_i\)</span> for the <span class="math notranslate nohighlight">\(i\)</span>th observation in the dataset (<span class="math notranslate nohighlight">\(i = 1, \dots, n\)</span>), <strong>unrelated to the <span class="math notranslate nohighlight">\(p\)</span> regressors</strong>.</p>
+<p>The maximized likelihood of the full model is denoted as <span class="math notranslate nohighlight">\(\hat{\mathscr{l}}_f\)</span>, whereas <span class="math notranslate nohighlight">\(\hat{\mathscr{l}}_p\)</span> is the value of the maximized likelihood computed from our dataset of <span class="math notranslate nohighlight">\(n\)</span> observation with <span class="math notranslate nohighlight">\(p\)</span> regressors. We compare the fits provided by these two models by the deviance <span class="math notranslate nohighlight">\(D_p\)</span> given by</p>
+<div class="math notranslate nohighlight">
+\[
+D_p = -2 \log \Bigg(\frac{\hat{\mathscr{l}}_p}{\hat{\mathscr{l}}_f} \Bigg) =  -2 \left[ \log \left( \hat{\mathscr{l}}_p \right) - \log \left(\hat{\mathscr{l}}_f \right) \right].
+\]</div>
+<p>Specifically, for Poisson regression, <span class="math notranslate nohighlight">\(D_p\)</span> is defined as follows:</p>
+<div class="math notranslate nohighlight" id="equation-deviance-poisson">
+<span class="eqno">(8)<a class="headerlink" href="#equation-deviance-poisson" title="Permalink to this equation">#</a></span>\[\begin{split}\begin{gather}
+\hat{\lambda}_i = \exp{\left( \hat{\beta_0} + \hat{\beta}_1 x_{i,1} + \dots + \hat{\beta}_p x_{i,p} \right)} \\
+D_p = 2 \sum_{i = 1}^n \left[ y_i \log \left( \frac{y_i}{\hat{\lambda}_i} \right) - \left( y_i - \hat{\lambda}_i \right) \right]
+\end{gather}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(y_i\)</span> is the <span class="math notranslate nohighlight">\(i\)</span>th observed response in the training set of size <span class="math notranslate nohighlight">\(n\)</span>. Note that when <span class="math notranslate nohighlight">\(y_i = 0\)</span> counts, then <span class="math notranslate nohighlight">\(\log \left( \frac{y_i}{\hat{\lambda}_i} \right)\)</span> is assumed as <span class="math notranslate nohighlight">\(0\)</span>.</p>
+<p>Unlike <a class="reference internal" href="#equation-deviance-bin-log">(4)</a> in Binary Logistic regression, <a class="reference internal" href="#equation-deviance-poisson">(8)</a> depicts the agreement of our model with <span class="math notranslate nohighlight">\(p\)</span> regressors to the observed data. Hence, we can use <a class="reference internal" href="#equation-deviance-poisson">(8)</a> to test the goodness of fit; i.e., <strong>whether our fitted model fits the data better than the saturated model, which makes it correctly specified (with a level of significance <span class="math notranslate nohighlight">\(\alpha\)</span>!)</strong>.</p>
+<p>The hypothesis are the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0: \text{Our}\textbf{ Model with $p$ regressors} \text{ fits the data better than the } \textbf{Saturated Model} \\
+H_a: \text{otherwise.}
+\end{gather*}\end{split}\]</div>
+<p>Let us test our following <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[h(\lambda_i) = \log(\lambda_i) = \beta_0 + \beta_1 X_{\texttt{width}_i}.\]</div>
+<p>We cannot use <code class="docutils literal notranslate"><span class="pre">anova()</span></code>, as in the nesting case, to perform this hypothesis testing. We will have to do it manually via <code class="docutils literal notranslate"><span class="pre">glance()</span></code>,</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">summary_poisson_model_1</span> <span class="o">&lt;-</span> <span class="nf">glance</span><span class="p">(</span><span class="n">poisson_model_1</span><span class="p">)</span>
+<span class="n">summary_poisson_model_1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 8</caption>
+<thead>
+	<tr><th scope=col>null.deviance</th><th scope=col>df.null</th><th scope=col>logLik</th><th scope=col>AIC</th><th scope=col>BIC</th><th scope=col>deviance</th><th scope=col>df.residual</th><th scope=col>nobs</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>632.7917</td><td>172</td><td>-461.5881</td><td>927.1762</td><td>933.4828</td><td>567.8786</td><td>171</td><td>173</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Column <code class="docutils literal notranslate"><span class="pre">deviance</span></code> provides <span class="math notranslate nohighlight">\(D_p\)</span> and is formally called <strong>residual deviance</strong>. <strong>Asymptotically</strong>, we have the following <strong>null distribution</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta_p \sim \chi^2_{n - (p + 1)}.
+\]</div>
+<p>The degrees of freedom (column <code class="docutils literal notranslate"><span class="pre">df.residual</span></code> in our <code class="docutils literal notranslate"><span class="pre">glance()</span></code> output) are the <strong>difference between the training set size <span class="math notranslate nohighlight">\(n\)</span> and the number of regression parameters in our model (including the intercept <span class="math notranslate nohighlight">\(\beta_0\)</span>).</strong></p>
+<p>Let us obtain the corresponding <span class="math notranslate nohighlight">\(p\text{-value}\)</span> for this test. We can do it using <code class="docutils literal notranslate"><span class="pre">pchisq()</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">pchisq</span><span class="p">(</span><span class="n">summary_poisson_model_1</span><span class="o">$</span><span class="n">deviance</span><span class="p">,</span>
+  <span class="n">df</span> <span class="o">=</span> <span class="n">summary_poisson_model_1</span><span class="o">$</span><span class="n">df.residual</span><span class="p">,</span>
+  <span class="n">lower.tail</span> <span class="o">=</span> <span class="kc">FALSE</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">4.49096400783637e-44</div></div>
+</div>
+<p>We obtain a <span class="math notranslate nohighlight">\(p\text{-value} &lt; .001\)</span>, which gives statistical evidence to state that our <code class="docutils literal notranslate"><span class="pre">poisson_model</span></code> is correctly specified when compared to the saturated model.</p>
+</section>
+<section id="analysis-of-deviance-for-nested-models">
+<h4>2.8.2. Analysis of Deviance for Nested Models<a class="headerlink" href="#analysis-of-deviance-for-nested-models" title="Permalink to this headline">#</a></h4>
+<p>As in the case of Binary logistic regression, we can use analysis of deviance for model selection when two models are nested. We will test our two models: <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code> with carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> as a explanatory variable, which is nested in <code class="docutils literal notranslate"><span class="pre">poisson_model_2</span></code> with carapace <code class="docutils literal notranslate"><span class="pre">width</span></code> and the <code class="docutils literal notranslate"><span class="pre">color</span></code> of the prosoma as explanatory variables.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\textbf{Model 1:} &amp; \\ 
+&amp; h(\lambda_i) = \log(\lambda_i) = \beta_0 + \beta_1 X_{\texttt{width}_i}. \\
+\textbf{Model 2:} &amp; \\ 
+&amp; h(\lambda_i) = \log(\lambda_i) = \beta_0 + \beta_1 X_{\texttt{width}_i} + \beta_2 X_{\texttt{color_darker}_i} + \beta_3 X_{\texttt{color_light}_i} + \beta_4 X_{\texttt{color_medium}_i}. \\
+\end{align*}\end{split}\]</div>
+<p>This specific model selection will involve a hypothesis testing. The hypotheses are:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0: \textbf{Model 1} \text{ fits the data better than } \textbf{Model 2} \\
+H_a: \text{otherwise.}
+\end{gather*}\end{split}\]</div>
+<p>Again, we use the multipurpose function <code class="docutils literal notranslate"><span class="pre">anova()</span></code> in the following way:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">round</span><span class="p">(</span><span class="nf">anova</span><span class="p">(</span><span class="n">poisson_model_1</span><span class="p">,</span>
+  <span class="n">poisson_model_2</span><span class="p">,</span>
+  <span class="n">test</span> <span class="o">=</span> <span class="s">&quot;Chi&quot;</span>
+<span class="p">),</span> <span class="m">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A anova: 2 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>Resid. Df</th><th scope=col>Resid. Dev</th><th scope=col>Df</th><th scope=col>Deviance</th><th scope=col>Pr(&gt;Chi)</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>171</td><td>567.8786</td><td>NA</td><td>    NA</td><td>    NA</td></tr>
+	<tr><th scope=row>2</th><td>168</td><td>559.3448</td><td> 3</td><td>8.5338</td><td>0.0362</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Let <span class="math notranslate nohighlight">\(D_2\)</span> be the deviance (column <code class="docutils literal notranslate"><span class="pre">Resid.</span> <span class="pre">Dev</span></code>) for <strong>Model 2</strong> (<code class="docutils literal notranslate"><span class="pre">poisson_model_2</span></code>) in row 2 and <span class="math notranslate nohighlight">\(D_1\)</span> (column <code class="docutils literal notranslate"><span class="pre">Resid.</span> <span class="pre">Dev</span></code>) the deviance for <strong>Model 1</strong> (<code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code>) in row 1. The test statistic <span class="math notranslate nohighlight">\(\Delta_D\)</span> (column <code class="docutils literal notranslate"><span class="pre">Deviance</span></code>) for the analysis of deviance is given by:</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta_D = D_1 - D_2 \sim \chi^2_{3},
+\]</div>
+<p>which <strong>asymptotically</strong> (i.e., <span class="math notranslate nohighlight">\(n \rightarrow \infty\)</span>) is chi-squared distributed with <span class="math notranslate nohighlight">\(3\)</span> degrees of freedom (column <code class="docutils literal notranslate"><span class="pre">Df</span></code>) under <span class="math notranslate nohighlight">\(H_0\)</span> <strong>for this specific case</strong>. In general, the degrees of freedom are the <strong>regression parameters of difference between both models</strong> (this has an impact on the factor-type explanatory variables with more than one dummy variable). Recall this is called the <strong>likelihood-ratio test</strong>.</p>
+<p>We obtain a <span class="math notranslate nohighlight">\(p\text{-value} &lt; .05\)</span>, column <code class="docutils literal notranslate"><span class="pre">Pr(&gt;Chi)</span></code>, which gives us evidence to reject <span class="math notranslate nohighlight">\(H_0\)</span> with <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>. Hence, we do not have evidence to conclude that <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code> fits the data better than <code class="docutils literal notranslate"><span class="pre">poisson_model_2</span></code>. In the context of model selection, we would choose <code class="docutils literal notranslate"><span class="pre">poisson_model_2</span></code>, that also includes the <code class="docutils literal notranslate"><span class="pre">color</span></code> of the prosoma.</p>
+</section>
+<section id="aic-and-bic">
+<h4>2.8.3. AIC and BIC<a class="headerlink" href="#aic-and-bic" title="Permalink to this headline">#</a></h4>
+<p>AIC <a class="reference internal" href="#equation-aic">(5)</a> and BIC <a class="reference internal" href="#equation-bic">(6)</a> can also be used for model selection as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">glance</span><span class="p">(</span><span class="n">poisson_model_1</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 8</caption>
+<thead>
+	<tr><th scope=col>null.deviance</th><th scope=col>df.null</th><th scope=col>logLik</th><th scope=col>AIC</th><th scope=col>BIC</th><th scope=col>deviance</th><th scope=col>df.residual</th><th scope=col>nobs</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>632.792</td><td>172</td><td>-461.588</td><td>927.176</td><td>933.483</td><td>567.879</td><td>171</td><td>173</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">glance</span><span class="p">(</span><span class="n">poisson_model_2</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_if</span><span class="p">(</span><span class="n">is.numeric</span><span class="p">,</span> <span class="n">round</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 8</caption>
+<thead>
+	<tr><th scope=col>null.deviance</th><th scope=col>df.null</th><th scope=col>logLik</th><th scope=col>AIC</th><th scope=col>BIC</th><th scope=col>deviance</th><th scope=col>df.residual</th><th scope=col>nobs</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>632.792</td><td>172</td><td>-457.321</td><td>924.642</td><td>940.409</td><td>559.345</td><td>168</td><td>173</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Following the results of the <code class="docutils literal notranslate"><span class="pre">AIC</span></code> column, we choose <code class="docutils literal notranslate"><span class="pre">poisson_model_2</span></code> over <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code>. Nonetheless, the <code class="docutils literal notranslate"><span class="pre">BIC</span></code> is penalizing the <code class="docutils literal notranslate"><span class="pre">poisson_model_2</span></code> for having more model parameters, so <code class="docutils literal notranslate"><span class="pre">poisson_model</span></code> would be chosen using this criterion.</p>
+</section>
+</section>
+</section>
+<section id="overdispersion">
+<h2>3. Overdispersion<a class="headerlink" href="#overdispersion" title="Permalink to this headline">#</a></h2>
+<p>From <strong>DSCI 551</strong>, we know that population variances of some random variables are <strong>in function</strong> of their respective means. For instance:</p>
+<ul class="simple">
+<li><p>If <span class="math notranslate nohighlight">\(X \sim \text{Exponential}(\lambda)\)</span>, then <span class="math notranslate nohighlight">\(\mathbb{E}(X) = \lambda\)</span> and <span class="math notranslate nohighlight">\(\text{Var}(X) = \lambda^2\)</span>.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(X \sim \text{Binomial}(n , \pi)\)</span>, then <span class="math notranslate nohighlight">\(\mathbb{E}(X) = n \pi\)</span> and <span class="math notranslate nohighlight">\(\text{Var}(X) = n \pi (1 - \pi)\)</span>.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(X \sim \text{Poisson}(\lambda)\)</span>, then <span class="math notranslate nohighlight">\(\mathbb{E}(X) = \lambda\)</span> and <span class="math notranslate nohighlight">\(\text{Var}(X) = \lambda\)</span>.</p></li>
+</ul>
+<p>Now, you might wonder: <strong>how does equidispersion affect our Poisson regression model?</strong></p>
+<p>First, we must clarify that GLMs naturally deal with some types of <strong>heteroscedasticity</strong> (inequality of variances across the responses). For example, note that each observation <span class="math notranslate nohighlight">\(i = 1, \dots, n\)</span> in our training set (used to estimate a Poisson regression model) is assumed as:</p>
+<div class="math notranslate nohighlight">
+\[Y_i \sim \text{Poisson}(\lambda_i),\]</div>
+<p>where the indexed parameter <span class="math notranslate nohighlight">\(\lambda_i\)</span> makes the model flexible enough to deal with heteroscedasticity. Moreover, the larger <span class="math notranslate nohighlight">\(\lambda_i\)</span> is, the larger the variance per observation will be.</p>
+<p>Let us make a quick simulation on this matter. The code below creates ten samples of <span class="math notranslate nohighlight">\(n = 1000\)</span> each from different Poisson populations with an increasing variance <span class="math notranslate nohighlight">\(\lambda\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">562</span><span class="p">)</span>
+
+<span class="n">poisson_samples</span> <span class="o">&lt;-</span> <span class="nf">tibble</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="m">-1</span><span class="p">,</span> <span class="n">lambda</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
+
+<span class="nf">for </span><span class="p">(</span><span class="n">lambda</span> <span class="n">in</span> <span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">91</span><span class="p">,</span> <span class="m">10</span><span class="p">))</span> <span class="p">{</span>
+  <span class="n">sample</span> <span class="o">&lt;-</span> <span class="nf">rpois</span><span class="p">(</span><span class="m">1000</span><span class="p">,</span> <span class="n">lambda</span><span class="p">)</span>
+  <span class="n">poisson_samples</span> <span class="o">&lt;-</span> <span class="n">poisson_samples</span> <span class="o">%&gt;%</span> <span class="nf">bind_rows</span><span class="p">(</span><span class="nf">tibble</span><span class="p">(</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sample</span><span class="p">,</span>
+    <span class="n">lambda</span> <span class="o">=</span> <span class="n">lambda</span>
+  <span class="p">))</span>
+<span class="p">}</span>
+
+<span class="n">poisson_samples</span> <span class="o">&lt;-</span> <span class="n">poisson_samples</span> <span class="o">%&gt;%</span> <span class="nf">filter</span><span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="m">-1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The side-by-side jitter plots below illustrate the impact of an increasing variance in each of the ten Poisson populations, where each set of <span class="math notranslate nohighlight">\(n = 1000\)</span> data points gets more and more spread out. We see the same trend with the side-by-side boxplots.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">poisson_jitter_plots</span> <span class="o">&lt;-</span> <span class="n">poisson_samples</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">lambda</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_jitter</span><span class="p">(</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">.</span><span class="m">2</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="m">2.5</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">31</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">27</span><span class="p">)</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">coord_cartesian</span><span class="p">(</span><span class="n">ylim</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">150</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Observed Value&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Side-by-Side Jitter Plots&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">91</span><span class="p">,</span> <span class="m">10</span><span class="p">))</span> <span class="o">+</span> 
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="nf">expression</span><span class="p">(</span><span class="n">lambda</span><span class="p">))</span>
+<span class="n">poisson_jitter_plots</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_count_regression_109_0.png" src="../_images/DSCI_562_lecture_glm_count_regression_109_0.png" />
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">poisson_boxplots</span> <span class="o">&lt;-</span> <span class="n">poisson_samples</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="nf">as_factor</span><span class="p">(</span><span class="n">lambda</span><span class="p">),</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">))</span> <span class="o">+</span> 
+  <span class="nf">geom_boxplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">31</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">27</span><span class="p">)</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">coord_cartesian</span><span class="p">(</span><span class="n">ylim</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">150</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Observed Value&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s">&quot;lambda&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Side-by-Side Boxplots&quot;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="nf">expression</span><span class="p">(</span><span class="n">lambda</span><span class="p">))</span>
+<span class="n">poisson_boxplots</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_count_regression_110_0.png" src="../_images/DSCI_562_lecture_glm_count_regression_110_0.png" />
+</div>
+</div>
+<p>We already defined <strong>equidispersion</strong> as an important characteristic of a Poisson random variable. We already explained that this random variable has the same mean and variance. The mean is the average of values in our dataset. Variance measures how spread the data are. It is computed as the average of the squared differences from the mean. A variance will be equal to zero if all values in our dataset are identical. The greater the difference between the values, the greater the variance.</p>
+<p>From the below plot, note that the relationship of the <strong>sample variance</strong> in these samples is practically linear to the population <span class="math notranslate nohighlight">\(\lambda\)</span>. So this is what equidispersion graphically looks like.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">suppressWarnings</span><span class="p">(</span><span class="nf">suppressMessages</span><span class="p">(</span><span class="nf">print</span><span class="p">(</span><span class="n">poisson_samples</span> <span class="o">%&gt;%</span> <span class="nf">group_by</span><span class="p">(</span><span class="n">lambda</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">summarise</span><span class="p">(</span><span class="n">sample_variance</span> <span class="o">=</span> <span class="nf">var</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">lambda</span><span class="p">,</span> <span class="n">sample_variance</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">lambda</span><span class="p">,</span> <span class="n">sample_variance</span><span class="p">),</span> <span class="n">size</span> <span class="o">=</span> <span class="m">4</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span>
+    <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">31</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&quot;bold&quot;</span><span class="p">),</span>
+    <span class="n">axis.text</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">21</span><span class="p">),</span>
+    <span class="n">axis.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">27</span><span class="p">)</span>
+  <span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Sample Variance&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="nf">expression</span><span class="p">(</span><span class="n">lambda</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&quot;Sample Variance versus Lambda&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">91</span><span class="p">,</span> <span class="m">10</span><span class="p">)))))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/DSCI_562_lecture_glm_count_regression_113_0.png" src="../_images/DSCI_562_lecture_glm_count_regression_113_0.png" />
+</div>
+</div>
+<p>Having said all this, in many cases, the variance of our data is sometimes larger than the variance considered by our model <strong>as in the basic Poisson regression</strong>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>When the variance is larger than the mean in a random variable, we have <strong>overdispersion</strong>. This matter will impact the standard error of our parameter estimates in a basic Poisson regression, as we will see.</p>
+</div>
+<p>Let us go back to our <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code> with the log link function from the <code class="docutils literal notranslate"><span class="pre">crabs</span></code> dataset with <code class="docutils literal notranslate"><span class="pre">width</span></code> as a regressor:</p>
+<div class="math notranslate nohighlight">
+\[
+h(\lambda_i) = \log(\lambda_i) = \beta_0 + \beta X_{\texttt{width}_i}.
+\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">poisson_model_1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm(formula = n_males ~ width, family = poisson, data = crabs)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.8526  -1.9884  -0.4933   1.0970   4.9221  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -3.30476    0.54224  -6.095  1.1e-09 ***
+width        0.16405    0.01997   8.216  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 632.79  on 172  degrees of freedom
+Residual deviance: 567.88  on 171  degrees of freedom
+AIC: 927.18
+
+Number of Fisher Scoring iterations: 6
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will test whether there is overdispersion in this Poisson regression model via function <code class="docutils literal notranslate"><span class="pre">dispersiontest()</span></code>, (from package <code class="docutils literal notranslate"><span class="pre">AER</span></code>).</p>
+<p>Let <span class="math notranslate nohighlight">\(Y_i\)</span> be the <span class="math notranslate nohighlight">\(i\)</span>th Poisson response in the count regression model. <strong>Ideally in the presence of equidispersion</strong>, <span class="math notranslate nohighlight">\(Y_i\)</span> has the following parameters:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+\mathbb{E}(Y_i) = \lambda_i \\
+\text{Var}(Y_i) = \lambda_i.
+\end{gather*}\end{split}\]</div>
+<p>The test uses the following mathematical expression:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Var}(Y_i) = \overbrace{(1 + \gamma)}^\text{Dispersion Factor} \lambda_i,
+\]</div>
+<p>with the hypotheses</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+H_0: 1 + \gamma = 1 \\
+H_a: 1 + \gamma &gt; 1.
+\end{gather*}\end{split}\]</div>
+<p>When there is evidence of overdispersion in our data, <strong>we will reject <span class="math notranslate nohighlight">\(H_0\)</span></strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">dispersiontest</span><span class="p">(</span><span class="n">poisson_model_1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>	Overdispersion test
+
+data:  poisson_model_1
+z = 5.558, p-value = 1.364e-08
+alternative hypothesis: true dispersion is greater than 1
+sample estimates:
+dispersion 
+  3.157244 
+</pre></div>
+</div>
+</div>
+</div>
+<p>With <span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>, we reject <span class="math notranslate nohighlight">\(H_0\)</span> since the <span class="math notranslate nohighlight">\(p\text{-value} &lt; .001\)</span>. Hence, the <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code> has overdispersion.</p>
+</section>
+<section id="quasi-poisson-regression">
+<h2>4. Quasi-Poisson Regression<a class="headerlink" href="#quasi-poisson-regression" title="Permalink to this headline">#</a></h2>
+<p>One of the consequences of having overdispersion in our model is that <strong>our standard errors will be underestimated</strong>, which will have an impact if we want to use the model to make inference. An underestimated standard error will make us <strong>more prone to reject the null hypothesis even though it might be true</strong> (<strong>i.e., committing Type I error</strong>).</p>
+<p>Alternatively to a Poisson regression model, we can use Quasi-Poisson:</p>
+<ul class="simple">
+<li><p>We still assume the following mean for the <span class="math notranslate nohighlight">\(i\)</span>th response as</p></li>
+</ul>
+<div class="math notranslate nohighlight" id="equation-quasi-mean">
+<span class="eqno">(9)<a class="headerlink" href="#equation-quasi-mean" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathbb{E}(Y_i) = \lambda_i.
+\end{equation}\]</div>
+<ul class="simple">
+<li><p>This regression model allows the regular variance value to be multiplied by an <strong>overdisperdion factor</strong> <span class="math notranslate nohighlight">\(\theta\)</span> as</p></li>
+</ul>
+<div class="math notranslate nohighlight" id="equation-quasi-variance">
+<span class="eqno">(10)<a class="headerlink" href="#equation-quasi-variance" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\text{Var}(Y_i) = \theta \lambda_i.
+\end{equation}\]</div>
+<ul class="simple">
+<li><p>Also, note that using the Quasi-Poisson <strong>does not change the estimates, just the standard errors</strong>.</p></li>
+<li><p>Finally, <strong>we cannot get the AIC or BIC using a Quasi-Poisson, because there is no regular likelihood function for this method</strong>.</p></li>
+</ul>
+<div class="admonition-a-note-on-quasi-poisson-estimation admonition">
+<p class="admonition-title">A note on Quasi-Poisson estimation</p>
+<p>Unlike the Poisson regression models, Quasi-Poisson is not a maximum likelihood approach but <strong>quasi-likelihood</strong>. Roughly speaking, a quasi-likelihood approach <strong>does not assume a fully joint probability distribution</strong> on our training data to construct a likelihood function so we can estimate the regression parameters (as in <strong>Exercise 1</strong> in <code class="docutils literal notranslate"><span class="pre">lab1</span></code>). Instead, Quasi-Poisson only assumes a relationship between the mean and variance as in <a class="reference internal" href="#equation-quasi-mean">(9)</a> and <a class="reference internal" href="#equation-quasi-variance">(10)</a> to build a quasi-likelihood function <span class="math notranslate nohighlight">\(Q\)</span> whose algebraic properties are similar to a regular likelihood function.</p>
+<p>Nevertheless, this approach computes differently each standard error <span class="math notranslate nohighlight">\(\mbox{se}(\hat{\beta}_j)\)</span> (used for testing the significance of a regression coefficient <span class="math notranslate nohighlight">\(\beta_j\)</span> associated with the <span class="math notranslate nohighlight">\(j\)</span>th regressor). This computation considers that there is overdispersion in the data, but how is it possible? The answer lies in an overdispersion parameter <span class="math notranslate nohighlight">\(\theta\)</span> representing this extra variance in our data. Hence, <span class="math notranslate nohighlight">\(\theta\)</span> quantifies how much variance is larger than the mean as a scale factor and lets the model provide a better fitting.</p>
+</div>
+<p>To fit this model, we use the function <code class="docutils literal notranslate"><span class="pre">glm()</span></code> and its argument <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">quasipoisson</span></code> (required to specify the Quasi-Poisson model).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">quasi_poisson_model</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">n_males</span> <span class="o">~</span> <span class="n">width</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">quasipoisson</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">crabs</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">quasi_poisson_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm(formula = n_males ~ width, family = quasipoisson, data = crabs)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.8526  -1.9884  -0.4933   1.0970   4.9221  
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.30476    0.96729  -3.417 0.000793 ***
+width        0.16405    0.03562   4.606 7.99e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for quasipoisson family taken to be 3.182205)
+
+    Null deviance: 632.79  on 172  degrees of freedom
+Residual deviance: 567.88  on 171  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 6
+</pre></div>
+</div>
+</div>
+</div>
+<p>Via <code class="docutils literal notranslate"><span class="pre">summary()</span></code>, we can see that the estimated overdispersion factor <span class="math notranslate nohighlight">\(\hat{\theta} = 3.18\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">poisson_model_1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm(formula = n_males ~ width, family = poisson, data = crabs)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.8526  -1.9884  -0.4933   1.0970   4.9221  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -3.30476    0.54224  -6.095  1.1e-09 ***
+width        0.16405    0.01997   8.216  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 632.79  on 172  degrees of freedom
+Residual deviance: 567.88  on 171  degrees of freedom
+AIC: 927.18
+
+Number of Fisher Scoring iterations: 6
+</pre></div>
+</div>
+</div>
+</div>
+<p>If we compare <code class="docutils literal notranslate"><span class="pre">quasi_poisson_model</span></code> to <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code>, the standard errors in <code class="docutils literal notranslate"><span class="pre">quasi_poisson_model</span></code> are larger than in <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code>. Given that we already concluded that there was overdispersion in <code class="docutils literal notranslate"><span class="pre">poisson_model_1</span></code>, we can conclude that we are underestimating the standard errors. Hence, the <code class="docutils literal notranslate"><span class="pre">quasi_poisson_model</span></code> provides more reliable inferential conclusions.</p>
+</section>
+<section id="negative-binomial-regression">
+<h2>5. Negative Binomial Regression<a class="headerlink" href="#negative-binomial-regression" title="Permalink to this headline">#</a></h2>
+<p>Let</p>
+<div class="math notranslate nohighlight">
+\[Y_i \sim \text{Negative Binomial} (k, \pi_i) \quad \text{for} \quad i = 1, \dots, n.\]</div>
+<p>From <strong>DSCI 551’s</strong> <a class="reference external" href="https://pages.github.ubc.ca/MDS-2022-23/DSCI_551_stat-prob-dsci_students/parametric-families.html#negative-binomial-a.k.a.-pascal"><strong><code class="docutils literal notranslate"><span class="pre">lecture2</span></code></strong></a>, recall that a Negative Binomial distribution has the following probability mass function (PMF):</p>
+<div class="math notranslate nohighlight" id="equation-nb-pdf">
+<span class="eqno">(11)<a class="headerlink" href="#equation-nb-pdf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+P(Y_i = y_i \mid k, \pi_i) = {k - 1 + y_i \choose y_i} \pi_i^{k} (1 - \pi_i)^{y_i}  \quad \text{for} \quad y_i = 0, 1, \dots
+\end{equation}\]</div>
+<p>A Negative Binomial random variable depicts <strong>the number of <span class="math notranslate nohighlight">\(y_i\)</span> failed independent Bernoulli trials before experiencing <span class="math notranslate nohighlight">\(k\)</span> successes</strong> with a probability of success <span class="math notranslate nohighlight">\(\pi_i\)</span>.</p>
+<p>This distribution has the following mean and variance:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather*}
+\mathbb{E}(Y_i) = \frac{k(1 - \pi_i)}{\pi_i} \\
+\text{Var}(Y_i) = \frac{k(1 - \pi_i)}{\pi_i^2}.
+\end{gather*}\end{split}\]</div>
+<section id="reparametrization">
+<h3>5.1. Reparametrization<a class="headerlink" href="#reparametrization" title="Permalink to this headline">#</a></h3>
+<p>Under the following parametrization:</p>
+<div class="math notranslate nohighlight" id="equation-nb-param">
+<span class="eqno">(12)<a class="headerlink" href="#equation-nb-param" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\lambda_i = \frac{k (1 - \pi_i)}{\pi_i} \qquad \Rightarrow \qquad \pi_i = \frac{k}{k + \lambda},
+\end{equation}\]</div>
+<p>the mean and variance can be reexpressed as</p>
+<div class="math notranslate nohighlight" id="equation-nb-mean-variance">
+<span class="eqno">(13)<a class="headerlink" href="#equation-nb-mean-variance" title="Permalink to this equation">#</a></span>\[\begin{split}\begin{gather}
+\mathbb{E}(Y_i) = \lambda_i \\
+\text{Var}(Y_i) = \lambda_i \left( 1 + \frac{\lambda_i}{k} \right).
+\end{gather}\end{split}\]</div>
+<p>This reparametrized variance indicates that a Negative Binomial random variable allows for overdispersion through factor <span class="math notranslate nohighlight">\(\left( 1 + \frac{\lambda_i}{k} \right)\)</span>.</p>
+<p>Finally, by applying parametrization <a class="reference internal" href="#equation-nb-param">(12)</a> in PDF <a class="reference internal" href="#equation-nb-pdf">(11)</a>, we have the following:</p>
+<div class="math notranslate nohighlight" id="equation-nb-alt-pdf">
+<span class="eqno">(14)<a class="headerlink" href="#equation-nb-alt-pdf" title="Permalink to this equation">#</a></span>\[\begin{split}\begin{align}
+P(Y_i = y_i \mid k, \pi_i) &amp;= {k - 1 + y_i \choose y_i} \pi_i^{k} (1 - \pi_i)^{y_i} \\
+&amp;= \frac{(k + y_i - 1)!}{y_i! (k - 1 )!} \left( \frac{k}{k + \lambda} \right)^{k} \left( 1 - \frac{k}{k + \lambda} \right)^{y_i} \\
+&amp;= \frac{\Gamma(y_i + k)}{\Gamma(y_i + 1) \Gamma(k)} \left( \frac{k}{k + \lambda} \right)^{k} \left( 1 - \frac{k}{k + \lambda} \right)^{y_i},
+\end{align}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Gamma(\cdot)\)</span> is the <a class="reference external" href="https://www.statlect.com/mathematical-tools/gamma-function"><strong>Gamma function</strong></a>. We actually use the property</p>
+<div class="math notranslate nohighlight">
+\[\Gamma(a) = (a - 1)!,\]</div>
+<p>where <span class="math notranslate nohighlight">\(a \geq 1\)</span> is an integer.</p>
+<div class="admonition-additional-note admonition">
+<p class="admonition-title">Additional note</p>
+<p>In <strong>DSCI 551</strong>, we highlighted the fact that some distributions converge to anothers where certain parameters tend to infinity. It can be shown that</p>
+<div class="math notranslate nohighlight">
+\[X \sim \text{Poisson}(\lambda) = \lim_{k \to \infty} \text{Negative Binomial}(k, \pi).\]</div>
+<p><strong>The proof is out of the scope of this course.</strong></p>
+</div>
+</section>
+<section id="id1">
+<h3>5.2. General Modelling Framework<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<p>As in the case of Poissson regression with <span class="math notranslate nohighlight">\(p\)</span> regressors, the Negative Binomial case is a GLM with the following link function:</p>
+<div class="math notranslate nohighlight" id="equation-nb-model">
+<span class="eqno">(15)<a class="headerlink" href="#equation-nb-model" title="Permalink to this equation">#</a></span>\[\begin{equation}
+h(\lambda_i) = \log(\lambda_i) = \beta_0 + \beta_1 X_{i,1} + \dots + \beta_p X_{i,p}.
+\end{equation}\]</div>
+<p>Lastly, note the following:</p>
+<ul class="simple">
+<li><p>From <a class="reference internal" href="#equation-nb-mean-variance">(13)</a>, let <span class="math notranslate nohighlight">\(\theta = \frac{1}{k}\)</span>. Then, Negative Binomial regression will assume the following variance:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\text{Var}(Y_i) &amp;= \lambda_i \left( 1 + \frac{\lambda_i}{k} \right) \\
+&amp;= \lambda_i + \frac{\lambda_i^2}{k} \\
+&amp;= \lambda_i + \theta \lambda_i^2.
+\end{align*}\end{split}\]</div>
+<ul class="simple">
+<li><p><strong>Therefore, the model has even more flexibility to deal with overdispersion compared to Quasi-Poisson regression.</strong></p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>5.3. Estimation<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<p>Via a training set of size <span class="math notranslate nohighlight">\(n\)</span> whose responses are <strong>independent counts</strong> <span class="math notranslate nohighlight">\(Y_i\)</span> (<span class="math notranslate nohighlight">\(i = 1, \dots, n\)</span>), we use the reparametrized PMF <a class="reference internal" href="#equation-nb-alt-pdf">(14)</a> along with the link function <a class="reference internal" href="#equation-nb-model">(15)</a> along with <strong>maximum likelihood estimation</strong> to obtain <span class="math notranslate nohighlight">\(\hat{\beta}_0, \hat{\beta}_1, \dots, \hat{\beta}_p, \hat{\theta}\)</span>. The procedure is analogous to the one in <strong>Exercise 1</strong> in <code class="docutils literal notranslate"><span class="pre">lab1</span></code>.</p>
+<p>To fit a Negative Binomial regression via <code class="docutils literal notranslate"><span class="pre">R</span></code>, we can use the function <code class="docutils literal notranslate"><span class="pre">glm.nb()</span></code> from package <code class="docutils literal notranslate"><span class="pre">MASS</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">MASS</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Attaching package: ‘MASS’
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following object is masked _by_ ‘.GlobalEnv’:
+
+    crabs
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following object is masked from ‘package:dplyr’:
+
+    select
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">negative_binomial_model</span> <span class="o">&lt;-</span> <span class="nf">glm.nb</span><span class="p">(</span><span class="n">n_males</span> <span class="o">~</span> <span class="n">width</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">crabs</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">negative_binomial_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm.nb(formula = n_males ~ width, data = crabs, init.theta = 0.90456808, 
+    link = log)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.7798  -1.4110  -0.2502   0.4770   2.0177  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -4.05251    1.17143  -3.459 0.000541 ***
+width        0.19207    0.04406   4.360  1.3e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for Negative Binomial(0.9046) family taken to be 1)
+
+    Null deviance: 213.05  on 172  degrees of freedom
+Residual deviance: 195.81  on 171  degrees of freedom
+AIC: 757.29
+
+Number of Fisher Scoring iterations: 1
+
+
+              Theta:  0.905 
+          Std. Err.:  0.161 
+
+ 2 x log-likelihood:  -751.291 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that the output provides <span class="math notranslate nohighlight">\(\hat{\theta} = 0.905\)</span> along with its standard error <span class="math notranslate nohighlight">\(\text{se}(\hat{\theta}) = 0.161\)</span>. Moreover, the standard errors of the other estimates are slightly larger than in <code class="docutils literal notranslate"><span class="pre">quasi_poisson_model</span></code>. Suppose we would like to be on the safe side with a regular maximum likelihood approach for our inferential conclusions while allowing for model selection. In that case, Negative Binomial regression is the way to go.</p>
+</section>
+<section id="coefficient-interpretation-prediction-goodness-of-fit-and-model-selection">
+<h3>5.4. Coefficient Interpretation, Prediction, Goodness of Fit, and Model Selection<a class="headerlink" href="#coefficient-interpretation-prediction-goodness-of-fit-and-model-selection" title="Permalink to this headline">#</a></h3>
+<p>Since the link function in Negative Binomial regression is the same as in Poisson regression, coefficient interpretation and prediction are performed similarly (even with the same <code class="docutils literal notranslate"><span class="pre">R</span></code> functions!). Regarding model selection, since we use a regular maximum likelihood approach to estimate the regression parameters, we can use analysis of deviance, AIC, and BIC to perform model selection and/or goodness of fit testing.</p>
+</section>
+</section>
+<section id="wrapping-up">
+<h2>6. Wrapping Up<a class="headerlink" href="#wrapping-up" title="Permalink to this headline">#</a></h2>
+<p>Negative Binomial regression is even more flexible than the Quasi-Poisson case since the variance’s representation allows it to be a quadratic function of the mean with an additional parameter.</p>
+<p>As we can see, the previous Quasi-Poisson and Negative Binomial regression models have extra parameters in the variance expression that allow us to construct a more accurate model for specific count data (since the mean and the variance do not need to be equal!). However, the variable association tests and conclusions are conducted similarly under these two models, as in the Poisson regression.</p>
+<p>We have covered binary and count responses so far via GLMs to make inference. Nevertheless, is there any modelling option when the response is categorical (nominal or ordinal)?</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "r"
+        },
+        kernelOptions: {
+            kernelName: "ir",
+            path: "./lecture-notes"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ir'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="DSCI_562_lecture_glm_logistic_regression.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">DSCI 552 Lecture 1 - Generalized Linear Models: Binary Logistic Regression</p>
+        </div>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By G. Alexi Rodríguez-Arelis<br/>
+  
+      &copy; Copyright 2023.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

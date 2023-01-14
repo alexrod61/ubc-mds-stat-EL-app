@@ -1,0 +1,8 @@
+format: jb-book
+root: README
+options:
+  caption: Lecture Notes
+chapters:
+- file: lecture-notes/DSCI_552_lecture-maximum-likelihood-estimation
+- file: lecture-notes/DSCI_562_lecture_glm_logistic_regression
+- file: lecture-notes/DSCI_562_lecture_glm_count_regression
